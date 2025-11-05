@@ -1,4 +1,4 @@
-@props([
+{{-- @props([
     'variant' => 'primary',
     'iconOnly' => false,
     'srText' => '',
@@ -78,3 +78,4 @@
         @endif
     </button>
 @endif
+ --}}
