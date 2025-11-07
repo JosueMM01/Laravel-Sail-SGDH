@@ -23,18 +23,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
-    <div
-        x-data="mainState"
-        class="font-sans antialiased"
-        :class="{dark: isDarkMode}"
-        x-cloak
-    >
-        <div class="flex flex-col min-h-screen text-gray-900 bg-gray-100 dark:bg-dark-eval-0 dark:text-gray-200">
-            {{ $slot }}
+<body class="font-sans antialiased">
+    <div class="flex min-h-screen flex-col bg-gradient-to-br from-[#f3fbf3] via-white to-[#eef3ff] text-slate-900">
+        {{ $slot }}
 
-            <x-footer />
-        </div>
+        <x-footer />
     </div>
 </body>
 </html>

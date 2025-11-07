@@ -1,11 +1,14 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium">
-            {{ __('Update Password') }}
+    <header class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#0033cc]">
+            {{ __('Seguridad') }}
+        </p>
+        <h2 class="text-2xl font-semibold text-slate-900">
+            {{ __('Actualiza tu contraseña') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+        <p class="text-sm leading-relaxed text-slate-600">
+            {{ __('Utiliza una contraseña segura y exclusiva para mantener protegida tu cuenta.') }}
         </p>
     </header>
 
@@ -68,9 +71,9 @@
             <x-form.error :messages="$errors->updatePassword->get('password_confirmation')" />
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center gap-4">
             <x-button>
-                {{ __('Save') }}
+                {{ __('Actualizar contraseña') }}
             </x-button>
 
             @if (session('status') === 'password-updated')
@@ -79,9 +82,9 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
+                    class="text-sm font-semibold text-[#009900]"
                 >
-                    {{ __('Saved.') }}
+                    {{ __('Contraseña actualizada.') }}
                 </p>
             @endif
         </div>

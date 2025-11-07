@@ -1,7 +1,7 @@
 <nav
     aria-label="secondary"
     x-data="{ open: false }"
-    class="sticky top-0 z-10 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white dark:bg-dark-eval-1"
+    class="sticky top-0 z-20 mx-4 mt-4 flex items-center justify-between rounded-3xl border border-[#d7f0d7] bg-white/90 px-4 py-4 text-slate-600 shadow-xl shadow-[#009900]/10 backdrop-blur-xl transition-transform duration-500 sm:px-6"
     :class="{
         '-translate-y-full': scrollingDown,
         'translate-y-0': scrollingUp,
@@ -10,58 +10,37 @@
     <div class="flex items-center gap-3">
         <x-button
             type="button"
-            class="md:hidden"
             icon-only
             variant="secondary"
-            sr-text="Toggle dark mode"
-            x-on:click="toggleTheme"
+            sr-text="Alternar menú lateral"
+            x-on:click="isSidebarOpen = !isSidebarOpen"
         >
-            <x-heroicon-o-moon
-                x-show="!isDarkMode"
+            <x-heroicon-o-menu
+                x-show="!isSidebarOpen"
+                class="h-6 w-6"
                 aria-hidden="true"
-                class="w-6 h-6"
             />
 
-            <x-heroicon-o-sun
-                x-show="isDarkMode"
+            <x-heroicon-o-x
+                x-show="isSidebarOpen"
+                class="h-6 w-6"
                 aria-hidden="true"
-                class="w-6 h-6"
             />
         </x-button>
     </div>
 
     <div class="flex items-center gap-3">
-        <x-button
-            type="button"
-            class="hidden md:inline-flex"
-            icon-only
-            variant="secondary"
-            sr-text="Toggle dark mode"
-            x-on:click="toggleTheme"
-        >
-            <x-heroicon-o-moon
-                x-show="!isDarkMode"
-                aria-hidden="true"
-                class="w-6 h-6"
-            />
-
-            <x-heroicon-o-sun
-                x-show="isDarkMode"
-                aria-hidden="true"
-                class="w-6 h-6"
-            />
-        </x-button>
-
         <x-dropdown align="right" width="48">
             <x-slot name="trigger">
                 <button
-                    class="flex items-center p-2 text-sm font-medium text-gray-500 rounded-md transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none focus:ring focus:ring-purple-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark-eval-1 dark:text-gray-400 dark:hover:text-gray-200"
+                    class="flex items-center gap-2 rounded-2xl border border-transparent bg-white/70 px-3 py-2 text-sm font-semibold text-[#006600] shadow-sm transition hover:border-[#009900]/30 hover:bg-[#f4fbf4] focus:outline-none focus:ring-2 focus:ring-[#006600]/60 focus:ring-offset-2 focus:ring-offset-white"
                 >
+                    <div class="hidden text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]/80 sm:block">Usuario</div>
                     <div>{{ Auth::user()->name }}</div>
 
                     <div class="ml-1">
                         <svg
-                            class="w-4 h-4 fill-current"
+                            class="h-4 w-4 fill-current"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                         >
@@ -76,24 +55,22 @@
             </x-slot>
 
             <x-slot name="content">
-                <!-- Profile -->
-                <x-dropdown-link
-                    :href="route('profile.edit')"
-                >
-                    {{ __('Perfil') }}
-                </x-dropdown-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-dropdown-link
-                        :href="route('logout')"
-                        onclick="event.preventDefault(); this.closest('form').submit();"
-                    >
-                        {{ __('Cerrar Sesión') }}
+                <div class="flex flex-col gap-1">
+                    <x-dropdown-link :href="route('profile.edit')">
+                        {{ __('Perfil') }}
                     </x-dropdown-link>
-                </form>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-dropdown-link
+                            :href="route('logout')"
+                            onclick="event.preventDefault(); this.closest('form').submit();"
+                        >
+                            {{ __('Cerrar Sesión') }}
+                        </x-dropdown-link>
+                    </form>
+                </div>
             </x-slot>
         </x-dropdown>
     </div>
@@ -101,7 +78,7 @@
 
 <!-- Mobile bottom bar -->
 <div
-    class="fixed inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden dark:bg-dark-eval-1"
+    class="fixed inset-x-0 bottom-0 flex items-center justify-between border-t border-[#d7f0d7] bg-white/90 px-4 py-4 text-slate-600 shadow-[0_-12px_30px_-18px_rgba(0,102,0,0.4)] backdrop-blur-xl transition-transform duration-500 md:hidden"
     :class="{
         'translate-y-full': scrollingDown,
         'translate-y-0': scrollingUp,
@@ -128,6 +105,7 @@
         variant="secondary"
         sr-text="Open main menu"
         x-on:click="isSidebarOpen = !isSidebarOpen"
+        class="rounded-2xl border border-[#d7f0d7] bg-white/80 p-2 text-[#006600] shadow-sm shadow-[#009900]/10 transition hover:border-[#009900]/40 hover:bg-[#f1fbf1]"
     >
         <x-heroicon-o-menu
             x-show="!isSidebarOpen"
