@@ -5,7 +5,7 @@
         </a>
     </div>
 
-    <div class="w-full px-6 py-4 my-6 overflow-hidden bg-white rounded-md shadow-md sm:max-w-md dark:bg-dark-eval-1">
+    <div class="my-6 w-full max-w-md rounded-[32px] border border-[#d7f0d7] bg-white/95 px-6 py-6 shadow-xl shadow-[#009900]/10 backdrop-blur-xl">
         {{ $slot }}
     </div>
 </main>

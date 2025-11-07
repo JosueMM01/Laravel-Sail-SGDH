@@ -11,7 +11,10 @@ class LoteController extends Controller
 {
     public function index() {
         // Eager loading para optimizar consultas
-        $lotes = Lote::with(['producto', 'proveedor'])->orderBy('fecha_caducidad')->get();
+        $lotes = Lote::with(['producto', 'proveedor'])
+            ->orderBy('fecha_caducidad')
+            ->paginate(12);
+
         return view('lotes.index', compact('lotes'));
     }
 

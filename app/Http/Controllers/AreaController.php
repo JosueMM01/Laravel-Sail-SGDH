@@ -8,7 +8,11 @@ use Illuminate\Http\Request;
 class AreaController extends Controller
 {
     public function index() {
-        $areas = Area::all();
+        $areas = Area::query()
+            ->withCount(['users', 'dotaciones'])
+            ->orderBy('nombre')
+            ->paginate(12);
+
         return view('areas.index', compact('areas'));
     }
 

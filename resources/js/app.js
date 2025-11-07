@@ -31,25 +31,8 @@ document.addEventListener('alpine:init', () => {
             })
         }
 
-        const getTheme = () => {
-            if (window.localStorage.getItem('dark')) {
-                return JSON.parse(window.localStorage.getItem('dark'))
-            }
-            return (
-                !!window.matchMedia &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches
-            )
-        }
-        const setTheme = (value) => {
-            window.localStorage.setItem('dark', value)
-        }
         return {
             init,
-            isDarkMode: getTheme(),
-            toggleTheme() {
-                this.isDarkMode = !this.isDarkMode
-                setTheme(this.isDarkMode)
-            },
             isSidebarOpen: window.innerWidth > 1024,
             isSidebarHovered: false,
             handleSidebarHover(value) {

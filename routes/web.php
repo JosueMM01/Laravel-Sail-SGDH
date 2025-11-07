@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\EntregaController;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\DotacionController;
+use App\Http\Controllers\LoteController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProveedorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,22 +45,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    Route::resource('areas', AreaController::class)->except(['show']);
+    Route::resource('dotaciones', DotacionController::class)->except(['show']);
+    Route::resource('productos', ProductoController::class);
+    Route::resource('proveedores', ProveedorController::class);
+    Route::resource('lotes', LoteController::class)->only(['index', 'create', 'store']);
+
+    Route::resource('solicitudes', SolicitudController::class)->only(['index', 'show']);
+    Route::patch('solicitudes/{solicitud}/estatus', [SolicitudController::class, 'updateStatus'])->name('solicitudes.update-status');
+
+    Route::get('entregas', [EntregaController::class, 'index'])->name('entregas.index');
+    Route::get('solicitudes/{solicitud}/entrega', [EntregaController::class, 'createFromSolicitud'])->name('entregas.create-from-solicitud');
+    Route::post('solicitudes/{solicitud}/entrega', [EntregaController::class, 'storeFromSolicitud'])->name('entregas.store-from-solicitud');
 });
-
-
-
-// useless routes
-// Just to demo sidebar dropdown links active states.
-Route::get('/buttons/text', function () {
-    return view('buttons-showcase.text');
-})->middleware(['auth'])->name('buttons.text');
-
-Route::get('/buttons/icon', function () {
-    return view('buttons-showcase.icon');
-})->middleware(['auth'])->name('buttons.icon');
-
-Route::get('/buttons/text-icon', function () {
-    return view('buttons-showcase.text-icon');
-})->middleware(['auth'])->name('buttons.text-icon');
 
 require __DIR__ . '/auth.php';

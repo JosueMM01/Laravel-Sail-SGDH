@@ -14,45 +14,100 @@
         </x-slot>
     </x-sidebar.link>
 
-    <x-sidebar.dropdown
-        title="Buttons"
-        :active="Str::startsWith(request()->route()->uri(), 'buttons')"
-    >
-        <x-slot name="icon">
-            <x-heroicon-o-view-grid class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
-        </x-slot>
+    @if (Route::has('users.index'))
+        <x-sidebar.link
+            title="Usuarios"
+            href="{{ route('users.index') }}"
+            :isActive="request()->routeIs('users.*')"
+        >
+            <x-slot name="icon">
+                <x-icons.user-group class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
 
-        <x-sidebar.sublink
-            title="Text button"
-            href="{{ route('buttons.text') }}"
-            :active="request()->routeIs('buttons.text')"
-        />
-        <x-sidebar.sublink
-            title="Icon button"
-            href="{{ route('buttons.icon') }}"
-            :active="request()->routeIs('buttons.icon')"
-        />
-        <x-sidebar.sublink
-            title="Text with icon"
-            href="{{ route('buttons.text-icon') }}"
-            :active="request()->routeIs('buttons.text-icon')"
-        />
-    </x-sidebar.dropdown>
+    @if (Route::has('areas.index'))
+        <x-sidebar.link
+            title="Áreas hospitalarias"
+            href="{{ route('areas.index') }}"
+            :isActive="request()->routeIs('areas.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-office-building class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
 
-    <div
-        x-transition
-        x-show="isSidebarOpen || isSidebarHovered"
-        class="text-sm text-gray-500"
-    >
-        Dummy Links
-    </div>
+    @if (Route::has('dotaciones.index'))
+        <x-sidebar.link
+            title="Reglas de dotación"
+            href="{{ route('dotaciones.index') }}"
+            :isActive="request()->routeIs('dotaciones.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-clipboard-check class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
 
-    @php
-        $links = array_fill(0, 20, '');
-    @endphp
+    @if (Route::has('productos.index'))
+        <x-sidebar.link
+            title="Productos"
+            href="{{ route('productos.index') }}"
+            :isActive="request()->routeIs('productos.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-collection class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
 
-    @foreach ($links as $index => $link)
-        <x-sidebar.link title="Dummy link {{ $index + 1 }}" href="#" />
-    @endforeach
+    @if (Route::has('proveedores.index'))
+        <x-sidebar.link
+            title="Proveedores"
+            href="{{ route('proveedores.index') }}"
+            :isActive="request()->routeIs('proveedores.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-briefcase class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
+
+    @if (Route::has('lotes.index'))
+        <x-sidebar.link
+            title="Lotes"
+            href="{{ route('lotes.index') }}"
+            :isActive="request()->routeIs('lotes.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-archive class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
+
+    @if (Route::has('entregas.index'))
+        <x-sidebar.link
+            title="Entregas"
+            href="{{ route('entregas.index') }}"
+            :isActive="request()->routeIs('entregas.*')"
+        >
+            <x-slot name="icon">
+                <x-heroicon-o-truck class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
+
+    @if (Route::has('solicitudes.index'))
+        <x-sidebar.link
+            title="Solicitudes extraordinarias"
+            href="{{ route('solicitudes.index') }}"
+            :isActive="request()->routeIs('solicitudes.*')"
+        >
+            <x-slot name="icon">
+                <x-icons.clipboard-check class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </x-slot>
+        </x-sidebar.link>
+    @endif
 
 </x-perfect-scrollbar>
