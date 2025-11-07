@@ -25,7 +25,7 @@
         x-collapse
     >
         <ul
-            class="relative px-0 pt-2 pb-0 ml-5 before:w-0 before:block before:absolute before:inset-y-0 before:left-0 before:border-l-2 before:border-l-gray-200 dark:before:border-l-gray-600"
+            class="relative ml-6 px-0 pt-3 pb-1 before:absolute before:inset-y-0 before:left-0 before:block before:w-0 before:border-l before:border-l-[#d7f0d7]"
         >
             {{ $slot }}
         </ul>

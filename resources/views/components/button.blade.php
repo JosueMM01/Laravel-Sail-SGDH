@@ -1,4 +1,4 @@
-{{-- @props([
+@props([
     'variant' => 'primary',
     'iconOnly' => false,
     'srText' => '',
@@ -6,76 +6,63 @@
     'size' => 'base',
     'disabled' => false,
     'pill' => false,
-    'squared' => false
+    'squared' => false,
 ])
 
 @php
-
-    $baseClasses = 'inline-flex items-center transition-colors font-medium select-none disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-eval-2';
-
-    switch ($variant) {
-        case 'primary':
-            $variantClasses = 'bg-purple-500 text-white hover:bg-purple-600 focus:ring-purple-500';
-        break;
-        case 'secondary':
-            $variantClasses = 'bg-white text-gray-500 hover:bg-gray-100 focus:ring-purple-500 dark:text-gray-400 dark:bg-dark-eval-1 dark:hover:bg-dark-eval-2 dark:hover:text-gray-200';
-        break;
-        case 'success':
-            $variantClasses = 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500';
-        break;
-        case 'danger':
-            $variantClasses = 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500';
-        break;
-        case 'warning':
-            $variantClasses = 'bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500';
-        break;
-        case 'info':
-            $variantClasses = 'bg-cyan-500 text-white hover:bg-cyan-600 focus:ring-cyan-500';
-        break;
-        case 'black':
-            $variantClasses = 'bg-black text-gray-300 hover:text-white hover:bg-gray-800 focus:ring-black dark:hover:bg-dark-eval-3';
-        break;
-        default:
-            $variantClasses = 'bg-purple-500 text-white hover:bg-purple-600 focus:ring-purple-500';
-    }
+    $baseClasses = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-60 disabled:cursor-not-allowed';
 
     switch ($size) {
         case 'sm':
-            $sizeClasses = $iconOnly ? 'p-1.5' : 'px-2.5 py-1.5 text-sm';
-        break;
-        case 'base':
-            $sizeClasses = $iconOnly ? 'p-2' : 'px-4 py-2 text-base';
-        break;
+            $sizeClasses = $iconOnly ? 'p-2 text-xs' : 'px-4 py-2 text-xs';
+            break;
         case 'lg':
+            $sizeClasses = $iconOnly ? 'p-3 text-base' : 'px-6 py-3 text-base';
+            break;
         default:
-            $sizeClasses = $iconOnly ? 'p-3' : 'px-5 py-2 text-xl';
-        break;
+            $sizeClasses = $iconOnly ? 'p-2.5 text-sm' : 'px-5 py-3 text-sm';
+            break;
     }
 
-    $classes = $baseClasses . ' ' . $sizeClasses . ' ' . $variantClasses;
-
-    if(!$squared && !$pill){
-        $classes .= ' rounded-md';
-    } else if ($pill) {
-        $classes .= ' rounded-full';
-
+    $shapeClasses = '';
+    if ($pill) {
+        $shapeClasses = 'rounded-full';
+    } elseif ($squared) {
+        $shapeClasses = 'rounded-xl';
+    } else {
+        $shapeClasses = 'rounded-2xl';
     }
 
+    switch ($variant) {
+        case 'secondary':
+            $variantClasses = 'border border-[#d7f0d7] bg-white/80 text-[#006600] shadow-sm shadow-[#009900]/10 hover:border-[#009900]/40 hover:bg-[#f4fbf4] focus:ring-[#006600]/60';
+            break;
+        case 'danger':
+            $variantClasses = 'border border-[#f4dddd] bg-[#ffefef] text-[#b42323] shadow-sm hover:bg-[#ffe3e3] focus:ring-[#d64545]/50';
+            break;
+        case 'ghost':
+            $variantClasses = 'border border-transparent bg-transparent text-[#006600] hover:bg-[#f4fbf4] focus:ring-[#006600]/50';
+            break;
+        default:
+            $variantClasses = 'border border-transparent bg-gradient-to-r from-[#006600] via-[#009900] to-[#0033cc] text-white shadow-lg shadow-[#009900]/25 hover:from-[#005500] hover:via-[#007700] hover:to-[#002bb8] focus:ring-[#006600]/70';
+            break;
+    }
+
+    $classes = trim("$baseClasses $sizeClasses $shapeClasses $variantClasses");
 @endphp
 
 @if ($href)
-    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes, 'role' => 'button']) }}>
         {{ $slot }}
-        @if($iconOnly)
-            <span class="sr-only">{{ $srText ?? '' }}</span>
+        @if ($iconOnly)
+            <span class="sr-only">{{ $srText }}</span>
         @endif
     </a>
 @else
-    <button {{ $attributes->merge(['type' => 'submit', 'class' => $classes]) }}>
+    <button {{ $attributes->merge(['type' => 'submit', 'class' => $classes]) }} {{ $disabled ? 'disabled' : '' }}>
         {{ $slot }}
-        @if($iconOnly)
-            <span class="sr-only">{{ $srText ?? '' }}</span>
+        @if ($iconOnly)
+            <span class="sr-only">{{ $srText }}</span>
         @endif
     </button>
 @endif
- --}}

@@ -1,7 +1,7 @@
 @props([
     'align' => 'right',
     'width' => '48',
-    'contentClasses' => 'py-1 bg-white dark:bg-dark-eval-2'
+    'contentClasses' => 'rounded-2xl border border-[#d7f0d7] bg-white/95 py-2 shadow-lg shadow-[#009900]/10 backdrop-blur-xl'
 ])
 
 @php
@@ -47,7 +47,7 @@
         style="display: none;"
         x-on:click="open = false"
     >
-        <div class="rounded-md ring-1 ring-black ring-opacity-5 {{ $contentClasses }}">
+        <div class="{{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>

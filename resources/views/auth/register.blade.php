@@ -115,9 +115,9 @@
                     </x-button>
                 </div>
 
-                <p class="text-sm text-gray-600 dark:text-gray-400">
+                <p class="text-sm text-slate-600">
                     {{ __('Already registered?') }}
-                    <a href="{{ route('login') }}" class="text-blue-500 hover:underline">
+                    <a href="{{ route('login') }}" class="font-semibold text-[#006600] underline decoration-[#009900]/60 underline-offset-4 transition hover:text-[#0033cc]">
                         {{ __('Login') }}
                     </a>
                 </p>

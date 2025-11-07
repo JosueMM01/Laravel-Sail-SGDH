@@ -140,3 +140,66 @@ El sistema implementa un modelo de seguridad estricto para garantizar que solo e
 * `entrega_id` (FK): Relación con entrega.
 * `lote_id` (FK): **Lote del que se descontó el producto**.
 * `cantidad_entregada`: Cantidad real salida de ese lote.
+
+---
+
+## Paleta propuesta (resumen de colores)
+
+- brand: #009900 (uso en logo, iconos, highlights)
+- brand-dark: #006600 (uso en botones, tarjetas con texto blanco)
+- accent-blue: #0033cc (navegación, enlaces, encabezados)
+- success: #00cc00 (badges/indicadores positivos)
+- warning: #f59e0b (ámbar para alertas)
+- error: #e11d48 (rojo para errores)
+- neutrals: white #ffffff, slate-700 #334155, bg #f8fafc
+
+Esta paleta se combinará con blanco para mantener contraste y limpieza visual.
+
+Modo oscuro / claro (Breeze + Blade UI Kit)
+
+Sí, puedes implementar modo oscuro y claro con la configuración actual (Breeze) y Blade UI Kit. Recomendaciones prácticas:
+
+- Configura Tailwind para usar `darkMode: 'class'` en `tailwind.config.js`.
+- Usa variables CSS para tus tokens de color (p. ej. `--color-brand`) y define valores en `:root` y en `.dark` para cambiar la paleta sin duplicar clases.
+- Alternativamente, extiende `theme.colors` en `tailwind.config.js` y usa las variantes `dark:` (por ejemplo `dark:bg-brand-dark`).
+- Añade un toggle (botón) que añada o quite la clase `dark` en el elemento `<html>` y guarda la preferencia en `localStorage`.
+- Verifica contraste en ambas variantes (claro/oscuro) y usa `brand-dark` para fondos donde haya texto blanco.
+
+Ejemplo mínimo (conceptual):
+
+```css
+:root {
+    --color-brand: #009900;
+    --color-bg: #f8fafc;
+}
+.dark {
+    --color-brand: #006600;
+    --color-bg: #0b1220;
+}
+```
+
+Y en `tailwind.config.js` puedes referenciar las variables:
+
+```js
+module.exports = {
+    darkMode: 'class',
+    theme: {
+        extend: {
+            colors: {
+                brand: 'var(--color-brand)'
+            }
+        }
+    }
+}
+```
+
+Un toggle simple en JS:
+
+```js
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+```
+
+Con esto tendrás la paleta aplicada tanto en modo claro como en modo oscuro, manteniendo coherencia semántica (verde para la marca y estados, azul para navegación/encabezados) y controlando el contraste con la variante `brand-dark`.
