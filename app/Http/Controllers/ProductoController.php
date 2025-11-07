@@ -2,77 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Proveedor;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 
-class ProveedorController extends Controller
+class ProductoController extends Controller
 {
     public function index()
     {
-        $proveedores = Proveedor::all(); // Podrías usar paginación: Proveedor::paginate(10);
-        return view('proveedores.index', compact('proveedores'));
+        $productos = Producto::query()
+            ->withCount(['lotes as lotes_count' => function ($query) {
+                $query->where('cantidad_actual', '>', 0)
+                    ->whereDate('fecha_caducidad', '>=', now());
+            }])
+            ->orderBy('descripcion')
+            ->paginate(12);
+
+        return view('productos.index', compact('productos'));
     }
 
     public function create()
     {
-        return view('proveedores.create');
+        return view('productos.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_proveedor' => 'required|unique:proveedores,no_proveedor|max:50',
-            'rfc' => 'required|unique:proveedores,rfc|size:13|regex:/^[A-ZÑ&]{3,4}\d{6}[A-V1-9][A-Z1-9][0-9A]$/i', // Validación básica de RFC
-            'razon_social' => 'required|string|max:255',
-            'direccion' => 'nullable|string',
-            'telefono' => 'nullable|string|max:20',
-            'correo' => 'nullable|email|max:255',
-            'pagina_web' => 'nullable|url|max:255',
-            'representante' => 'nullable|string|max:255',
+            'clave' => 'required|string|max:50|unique:productos,clave',
+            'descripcion' => 'required|string',
+            'presentacion' => 'required|string|max:255',
+            'cuadro_basico' => 'nullable|boolean',
+            'stock_min' => 'required|integer|min:0',
+            'stock_optimo' => 'required|integer|min:0',
+            'stock_max' => 'required|integer|min:0',
         ]);
 
-        Proveedor::create($validated); // El Trait Auditable llena automáticamente el usuario
+        $validated['cuadro_basico'] = $request->boolean('cuadro_basico');
 
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor registrado exitosamente.');
+        Producto::create($validated);
+
+        return redirect()->route('productos.index')->with('success', 'Producto registrado correctamente.');
     }
 
-    public function show(Proveedor $proveedor)
+    public function show(Producto $producto)
     {
-        return view('proveedores.show', compact('proveedor'));
+        $producto->load(['lotes' => function ($query) {
+            $query->with('proveedor')
+                ->where('cantidad_actual', '>', 0)
+                ->whereDate('fecha_caducidad', '>=', now())
+                ->orderBy('fecha_caducidad');
+        }]);
+
+        return view('productos.show', compact('producto'));
     }
 
-    public function edit(Proveedor $proveedor)
+    public function edit(Producto $producto)
     {
-        return view('proveedores.edit', compact('proveedor'));
+        return view('productos.edit', compact('producto'));
     }
 
-    public function update(Request $request, Proveedor $proveedor)
+    public function update(Request $request, Producto $producto)
     {
         $validated = $request->validate([
-            'no_proveedor' => 'required|max:50|unique:proveedores,no_proveedor,' . $proveedor->id,
-            'rfc' => 'required|size:13|regex:/^[A-ZÑ&]{3,4}\d{6}[A-V1-9][A-Z1-9][0-9A]$/i|unique:proveedores,rfc,' . $proveedor->id,
-            'razon_social' => 'required|string|max:255',
-            'direccion' => 'nullable|string',
-            'telefono' => 'nullable|string|max:20',
-            'correo' => 'nullable|email|max:255',
-            'pagina_web' => 'nullable|url|max:255',
-            'representante' => 'nullable|string|max:255',
-            'estatus' => 'boolean', // Permitir activar/desactivar
+            'clave' => 'required|string|max:50|unique:productos,clave,' . $producto->id,
+            'descripcion' => 'required|string',
+            'presentacion' => 'required|string|max:255',
+            'cuadro_basico' => 'nullable|boolean',
+            'stock_min' => 'required|integer|min:0',
+            'stock_optimo' => 'required|integer|min:0',
+            'stock_max' => 'required|integer|min:0',
         ]);
 
-        $proveedor->update($validated);
+        $validated['cuadro_basico'] = $request->boolean('cuadro_basico');
 
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor actualizado correctamente.');
+        $producto->update($validated);
+
+        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
 
-    public function destroy(Proveedor $proveedor)
+    public function destroy(Producto $producto)
     {
-        // Validar si tiene lotes asociados antes de eliminar
-        if ($proveedor->lotes()->exists()) {
-             return back()->with('error', 'No se puede eliminar el proveedor porque tiene historial de lotes.');
+        if ($producto->lotes()->exists()) {
+            return back()->with('error', 'No se puede eliminar el producto porque tiene lotes asociados.');
         }
 
-        $proveedor->delete();
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor eliminado.');
+        $producto->delete();
+
+        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

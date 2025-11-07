@@ -4,15 +4,14 @@
 ])
 
 @php
-    $withiconClasses = $withicon ? 'pl-11 pr-4' : 'px-4'
+    $paddingClasses = $withicon ? 'pl-12 pr-4' : 'px-4';
+    $baseClasses = 'w-full rounded-2xl border border-[#d7f0d7] bg-white py-3 text-base text-slate-900 placeholder:text-slate-400 shadow-inner shadow-[#f1f5f1] focus:border-[#006600] focus:ring-2 focus:ring-[#006600]/60 focus:outline-none transition';
 @endphp
 
 <input
     {{ $disabled ? 'disabled' : '' }}
     {!! $attributes->merge([
-            'class' => $withiconClasses . ' py-2 border-gray-400 rounded-md focus:border-gray-400 focus:ring
-            focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:border-gray-600 dark:bg-dark-eval-1
-            dark:text-gray-300 dark:focus:ring-offset-dark-eval-1',
+            'class' => trim($paddingClasses . ' ' . $baseClasses),
         ])
     !!}
 >

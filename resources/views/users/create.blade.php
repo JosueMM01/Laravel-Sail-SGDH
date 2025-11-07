@@ -1,77 +1,72 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Registrar Nuevo Usuario (Invitación)') }}
-        </h2>
+        <div class="rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Usuarios</p>
+            <div class="mt-3 flex flex-col gap-2">
+                <h2 class="text-2xl font-semibold text-slate-900">{{ __('Registrar nuevo usuario (invitación)') }}</h2>
+                <p class="text-sm text-slate-600">Completa los datos para enviar la invitación al colaborador seleccionado.</p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div class="rounded-3xl border border-[#d7f0d7] bg-white/90 p-8 shadow-lg shadow-[#d7f0d7]/30">
+                <form method="POST" action="{{ route('users.store') }}" class="space-y-6">
+                    @csrf
 
-                    <form method="POST" action="{{ route('users.store') }}" class="space-y-6">
-                        @csrf
+                    <div class="space-y-2">
+                        <x-form.label for="name" :value="__('Nombre completo')" />
+                        <x-form.input id="name" type="text" name="name" :value="old('name')" required autofocus />
+                        <x-form.error :messages="$errors->get('name')" />
+                    </div>
 
-                        <div>
-                            <x-form.label for="name" :value="__('Nombre Completo')" />
-                            <x-form.input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
-                            <x-form.error :messages="$errors->get('name')" class="mt-2" />
-                        </div>
+                    <div class="space-y-2">
+                        <x-form.label for="email" :value="__('Correo electrónico (Gmail)')" />
+                        <x-form.input id="email" type="email" name="email" :value="old('email')" required />
+                        <p class="text-sm text-slate-500">El usuario deberá usar este correo para acceder mediante Google.</p>
+                        <x-form.error :messages="$errors->get('email')" />
+                    </div>
 
-                        <div>
-                            <x-form.label for="email" :value="__('Correo Electrónico (Gmail)')" />
-                            <x-form.input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                El usuario deberá usar este correo para iniciar sesión con Google.
-                            </p>
-                            <x-form.error :messages="$errors->get('email')" class="mt-2" />
-                        </div>
+                    <div class="space-y-2">
+                        <x-form.label for="rol" :value="__('Rol / cargo')" />
+                        <x-form.select id="rol" name="rol" required>
+                            <option value="personal_area" @selected(old('rol') === 'personal_area')>Personal de área</option>
+                            <option value="admin_farmacia" @selected(old('rol') === 'admin_farmacia')>Administrador de farmacia</option>
+                        </x-form.select>
+                        <x-form.error :messages="$errors->get('rol')" />
+                    </div>
 
-                        <div>
-                            <x-form.label for="rol" :value="__('Rol / Cargo')" />
-                            <select id="rol" name="rol" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block mt-1 w-full">
-                                <option value="personal_area">Personal de Área</option>
-                                <option value="admin_farmacia">Administrador de Farmacia</option>
-                            </select>
-                            <x-form.error :messages="$errors->get('rol')" class="mt-2" />
-                        </div>
+                    <div class="space-y-2">
+                        <x-form.label for="area_id" :value="__('Área asignada (opcional)')" />
+                        <x-form.select id="area_id" name="area_id" :placeholder="__('Sin área asignada')">
+                            @foreach($areas as $area)
+                                <option value="{{ $area->id }}" @selected(old('area_id') == $area->id)>{{ $area->nombre }}</option>
+                            @endforeach
+                        </x-form.select>
+                        <p class="text-sm text-slate-500">Asignar cuando el rol seleccionado sea "Personal de área".</p>
+                        <x-form.error :messages="$errors->get('area_id')" />
+                    </div>
 
-                        <div>
-                            <x-form.label for="area_id" :value="__('Área Asignada (Opcional)')" />
-                            <select id="area_id" name="area_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block mt-1 w-full">
-                                <option value="">-- Ninguna --</option>
-                                @foreach($areas as $area)
-                                    <option value="{{ $area->id }}">{{ $area->nombre }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                Necesario si el rol es "Personal de Área".
-                            </p>
-                            <x-form.error :messages="$errors->get('area_id')" class="mt-2" />
-                        </div>
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <x-button type="submit" class="w-full sm:w-auto">
+                            {{ __('Enviar invitación') }}
+                        </x-button>
 
-                        <div class="flex items-center gap-4">
-                            <button
-                                type="submit"
-                                class="inline-flex items-center justify-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
+                        @if (session('success'))
+                            <p
+                                x-data="{ show: true }"
+                                x-show="show"
+                                x-transition
+                                x-init="setTimeout(() => show = false, 4000)"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-[#cce7cc] bg-[#f6fdf6] px-4 py-2 text-sm font-semibold text-[#1b7a1b]"
                             >
-                                {{ __('Enviar Invitación') }}
-                            </button>
-                            
-                            @if (session('success'))
-                                <p
-                                    x-data="{ show: true }"
-                                    x-show="show"
-                                    x-transition
-                                    x-init="setTimeout(() => show = false, 4000)"
-                                    class="text-sm text-green-600 dark:text-green-400"
-                                >{{ session('success') }}</p>
-                            @endif
-                        </div>
-                    </form>
-
-                </div>
+                                <x-heroicon-o-check-circle class="h-5 w-5" />
+                                <span>{{ session('success') }}</span>
+                            </p>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
     </div>

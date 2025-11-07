@@ -9,7 +9,10 @@ class ProveedorController extends Controller
 {
     public function index()
     {
-        $proveedores = Proveedor::all(); // Podrías usar paginación: Proveedor::paginate(10);
+        $proveedores = Proveedor::query()
+            ->orderBy('razon_social')
+            ->paginate(12);
+
         return view('proveedores.index', compact('proveedores'));
     }
 

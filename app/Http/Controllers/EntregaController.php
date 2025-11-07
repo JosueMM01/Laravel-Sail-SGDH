@@ -5,13 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Entrega;
 use App\Models\Solicitud;
 use App\Models\Lote;
-use App\Models\Area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class EntregaController extends Controller
 {
+    public function index()
+    {
+        $entregas = Entrega::query()
+            ->with(['area', 'usuarioEntrega', 'solicitud'])
+            ->withCount('detalles')
+            ->latest('fecha_entrega')
+            ->paginate(12);
+
+        return view('entregas.index', compact('entregas'));
+    }
+
     /**
      * Muestra formulario para surtir una solicitud aprobada.
      */

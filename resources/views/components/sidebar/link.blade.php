@@ -5,11 +5,17 @@
 ])
 
 @php
-    $isActiveClasses =  $isActive ? 'text-white bg-purple-500 shadow-lg hover:bg-purple-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-dark-eval-2';
+    $baseClasses = 'flex flex-shrink-0 items-center gap-3 overflow-hidden rounded-2xl border border-transparent px-3 py-2 text-sm font-semibold transition-all duration-200';
 
-    $classes = 'flex-shrink-0 flex items-center gap-2 p-2 transition-colors rounded-md overflow-hidden ' . $isActiveClasses;
+    if ($collapsible) {
+        $baseClasses .= ' w-full';
+    }
 
-    if($collapsible) $classes .= ' w-full';
+    if ($isActive) {
+        $classes = $baseClasses . ' bg-gradient-to-r from-[#006600] via-[#009900] to-[#0033cc] text-white shadow-lg shadow-[#006600]/30';
+    } else {
+        $classes = $baseClasses . ' bg-white/60 text-slate-600 hover:border-[#d7f0d7] hover:bg-[#f4fbf4] hover:text-[#006600]';
+    }
 @endphp
 
 @if ($collapsible)
@@ -34,12 +40,12 @@
         >
             <span
                 :class="open ? '-rotate-45' : 'rotate-45'"
-                class="absolute right-[9px] bg-gray-400 mt-[-5px] h-2 w-[2px] top-1/2 transition-all duration-200"
+                class="absolute right-[9px] mt-[-5px] h-2 w-[2px] bg-[#009900] top-1/2 transition-all duration-200"
             ></span>
 
             <span
                 :class="open ? 'rotate-45' : '-rotate-45'"
-                class="absolute left-[9px] bg-gray-400 mt-[-5px] h-2 w-[2px] top-1/2 transition-all duration-200"
+                class="absolute left-[9px] mt-[-5px] h-2 w-[2px] bg-[#009900] top-1/2 transition-all duration-200"
             ></span>
         </span>
     </button>

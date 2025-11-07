@@ -26,11 +26,10 @@
 <body class="font-sans antialiased">
     <div
         x-data="mainState"
-        :class="{ dark: isDarkMode }"
         x-on:resize.window="handleWindowResize"
         x-cloak
     >
-        <div class="min-h-screen text-gray-900 bg-gray-100 dark:bg-dark-eval-0 dark:text-gray-200">
+    <div class="min-h-screen bg-gradient-to-br from-[#f3fbf3] via-white to-[#eef3ff] text-slate-900">
             <!-- Sidebar -->
             <x-sidebar.sidebar />
 
@@ -38,8 +37,8 @@
             <div
                 class="flex flex-col min-h-screen"
                 :class="{
-                    'lg:ml-64': isSidebarOpen,
-                    'md:ml-16': !isSidebarOpen
+                    'lg:ml-72': isSidebarOpen,
+                    'lg:ml-0': !isSidebarOpen
                 }"
                 style="transition-property: margin; transition-duration: 150ms;"
             >
