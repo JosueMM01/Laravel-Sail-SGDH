@@ -54,7 +54,7 @@
                 </header>
 
                 <!-- Page Content -->
-                <main class="px-4 sm:px-6 flex-1">
+                <main class="px-4 sm:px-6 flex-1 pb-24 md:pb-16">
                     {{ $slot }}
                 </main>
 

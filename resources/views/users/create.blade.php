@@ -31,8 +31,9 @@
                     <div class="space-y-2">
                         <x-form.label for="rol" :value="__('Rol / cargo')" />
                         <x-form.select id="rol" name="rol" required>
-                            <option value="personal_area" @selected(old('rol') === 'personal_area')>Personal de área</option>
-                            <option value="admin_farmacia" @selected(old('rol') === 'admin_farmacia')>Administrador de farmacia</option>
+                            @foreach ($roleOptions as $value => $label)
+                                <option value="{{ $value }}" @selected(old('rol', 'personal_area') === $value)>{{ $label }}</option>
+                            @endforeach
                         </x-form.select>
                         <x-form.error :messages="$errors->get('rol')" />
                     </div>
