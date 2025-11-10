@@ -26,6 +26,11 @@ class GoogleLoginController extends Controller
             $existingUser = User::where('email', $googleUser->getEmail())->first();
 
             if ($existingUser) {
+                if (! $existingUser->is_active) {
+                    return redirect()->route('login')
+                        ->with('error', 'Tu cuenta ha sido desactivada. Contacta al administrador para restaurar el acceso.');
+                }
+
                 // SI EXISTE: Lo logueamos.
                 // Opcional: Guardamos su Google ID si no lo tenía
                 if (is_null($existingUser->google_id)) {

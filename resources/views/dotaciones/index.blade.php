@@ -29,7 +29,7 @@
 
                     @if (request()->has('area_id') && request('area_id') !== null)
                         <x-button href="{{ route('dotaciones.index') }}" variant="ghost" class="w-full sm:w-auto">
-                            <x-heroicon-o-x-mark class="h-5 w-5" aria-hidden="true" />
+                            <x-heroicon-o-x-circle class="h-5 w-5" aria-hidden="true" />
                             <span>Limpiar filtro</span>
                         </x-button>
                     @endif
