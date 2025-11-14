@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\Proveedor;
+use App\Support\AdminAudit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
 class ProveedorController extends Controller
 {
     public function index()
     {
         $proveedores = Proveedor::query()
+            ->orderByDesc('estatus')
             ->orderBy('razon_social')
             ->paginate(12);
 
@@ -34,7 +39,16 @@ class ProveedorController extends Controller
             'representante' => 'nullable|string|max:255',
         ]);
 
-        Proveedor::create($validated); // El Trait Auditable llena automáticamente el usuario
+        $validated['estatus'] = true;
+
+        $proveedor = Proveedor::create($validated); // El Trait Auditable llena automáticamente el usuario
+
+        AdminAudit::record(
+            $request,
+            $proveedor,
+            'proveedor_creado',
+            ['payload' => Arr::except($validated, ['estatus'])]
+        );
 
         return redirect()->route('proveedores.index')->with('success', 'Proveedor registrado exitosamente.');
     }
@@ -63,19 +77,151 @@ class ProveedorController extends Controller
             'estatus' => 'boolean', // Permitir activar/desactivar
         ]);
 
+        $original = Arr::only($proveedor->getOriginal(), [
+            'no_proveedor',
+            'rfc',
+            'razon_social',
+            'direccion',
+            'telefono',
+            'correo',
+            'pagina_web',
+            'representante',
+            'estatus',
+        ]);
+
         $proveedor->update($validated);
+
+        $changes = $this->detectChanges($original, $proveedor->only(array_keys($original)));
+
+        if ($changes) {
+            AdminAudit::record(
+                $request,
+                $proveedor,
+                'proveedor_actualizado',
+                ['changes' => $changes]
+            );
+        }
 
         return redirect()->route('proveedores.index')->with('success', 'Proveedor actualizado correctamente.');
     }
 
-    public function destroy(Proveedor $proveedor)
+    public function deactivate(Request $request, Proveedor $proveedor)
     {
-        // Validar si tiene lotes asociados antes de eliminar
+        $user = $request->user();
+        $role = $user?->role();
+
+        if (! $user || (! $user->is_super_admin && $role !== UserRole::ADMIN_FARMACIA)) {
+            abort(403);
+        }
+
+        if (! $proveedor->estatus) {
+            return back()->with('success', 'El proveedor ya estaba inactivo.');
+        }
+
+        $proveedor->update([
+            'estatus' => false,
+            'last_modified_by_user_id' => $user->id,
+        ]);
+
+        AdminAudit::record(
+            $request,
+            $proveedor,
+            'proveedor_desactivado',
+            ['previous_state' => ['estatus' => true]]
+        );
+
+        return redirect()->route('proveedores.index')->with('success', 'Proveedor desactivado correctamente.');
+    }
+
+    public function activate(Request $request, Proveedor $proveedor)
+    {
+        $user = $request->user();
+        $role = $user?->role();
+
+        if (! $user || (! $user->is_super_admin && $role !== UserRole::SUPER_ADMIN)) {
+            abort(403);
+        }
+
+        if ($proveedor->estatus) {
+            return back()->with('success', 'El proveedor ya estaba activo.');
+        }
+
+        $proveedor->update([
+            'estatus' => true,
+            'last_modified_by_user_id' => $user->id,
+        ]);
+
+        AdminAudit::record(
+            $request,
+            $proveedor,
+            'proveedor_reactivado',
+            ['previous_state' => ['estatus' => false]]
+        );
+
+        return redirect()->route('proveedores.index')->with('success', 'Proveedor reactivado correctamente.');
+    }
+
+    public function destroy(Request $request, Proveedor $proveedor)
+    {
+        $user = $request->user();
+        $role = $user?->role();
+
+        if (! $user || (! $user->is_super_admin && $role !== UserRole::SUPER_ADMIN)) {
+            abort(403);
+        }
+
+        $validator = Validator::make(
+            $request->all(),
+            ['confirmation' => ['required', 'string', 'in:ELIMINAR']],
+            [],
+            ['confirmation' => 'confirmación']
+        );
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator, 'deleteProveedor')
+                ->with('delete_proveedor_id', $proveedor->id)
+                ->withInput();
+        }
+
+        if ($proveedor->estatus) {
+            return back()->with('error', 'Desactiva el proveedor antes de eliminarlo permanentemente.');
+        }
+
         if ($proveedor->lotes()->exists()) {
              return back()->with('error', 'No se puede eliminar el proveedor porque tiene historial de lotes.');
         }
 
+        AdminAudit::record(
+            $request,
+            $proveedor,
+            'proveedor_eliminado',
+            [
+                'no_proveedor' => $proveedor->no_proveedor,
+                'rfc' => $proveedor->rfc,
+            ]
+        );
+
         $proveedor->delete();
+
         return redirect()->route('proveedores.index')->with('success', 'Proveedor eliminado.');
+    }
+
+    private function detectChanges(array $original, array $current): array
+    {
+        $changes = [];
+
+        foreach ($original as $field => $oldValue) {
+            $newValue = $current[$field] ?? null;
+
+            if ($oldValue != $newValue) {
+                $changes[$field] = [
+                    'old' => $oldValue,
+                    'new' => $newValue,
+                ];
+            }
+        }
+
+        return $changes;
     }
 }

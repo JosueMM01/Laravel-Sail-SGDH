@@ -8,17 +8,12 @@
             </div>
             <div class="flex flex-col items-start gap-2 sm:items-end">
                 @php
-                    $statusStyles = [
-                        'pendiente' => ['badge' => 'bg-[#fff8e6] text-[#b78a1f]', 'dot' => 'bg-[#d19b2a]'],
-                        'aprobada' => ['badge' => 'bg-[#e9f7e9] text-[#1b7a1b]', 'dot' => 'bg-[#1b7a1b]'],
-                        'rechazada' => ['badge' => 'bg-[#ffefef] text-[#b42323]', 'dot' => 'bg-[#b42323]'],
-                        'surtida' => ['badge' => 'bg-[#e7f3ff] text-[#1c4ed8]', 'dot' => 'bg-[#1c4ed8]'],
-                    ];
-                    $currentStatus = $statusStyles[$solicitud->estatus] ?? ['badge' => 'bg-[#f1f5f1] text-slate-600', 'dot' => 'bg-slate-400'];
+                    $statusEnum = $solicitud->status();
+                    $badge = $statusEnum?->badgeClasses() ?? ['badge' => 'bg-[#f1f5f1] text-slate-600', 'dot' => 'bg-slate-400'];
                 @endphp
-                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold {{ $currentStatus['badge'] }}">
-                    <span class="h-2 w-2 rounded-full {{ $currentStatus['dot'] }}"></span>
-                    <span>{{ ucfirst($solicitud->estatus) }}</span>
+                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold {{ $badge['badge'] }}">
+                    <span class="h-2 w-2 rounded-full {{ $badge['dot'] }}"></span>
+                    <span>{{ $statusEnum?->label() ?? ucfirst($solicitud->estatus) }}</span>
                 </span>
                 <p class="text-xs font-medium uppercase tracking-[0.35em] text-slate-400">{{ $solicitud->fecha_solicitud?->format('d/m/Y H:i') ?? '—' }}</p>
             </div>
@@ -72,53 +67,89 @@
                         <div class="rounded-3xl border border-[#e7f5e7] bg-[#f7fcf7] p-5">
                             <h3 class="text-sm font-semibold uppercase tracking-[0.25em] text-[#006600]">Acciones rápidas</h3>
                             <div class="mt-4 space-y-3 text-sm text-slate-600">
-                                <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="estatus" value="aprobada">
-                                    <x-button type="submit" class="w-full justify-center" variant="primary">
-                                        <x-heroicon-o-check class="h-4 w-4" aria-hidden="true" />
-                                        <span>Marcar como aprobada</span>
-                                    </x-button>
-                                </form>
+                                @php
+                                    $statusEnum = $solicitud->status();
+                                @endphp
 
-                                @if ($solicitud->estatus !== 'pendiente')
-                                    <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="estatus" value="pendiente">
-                                        <x-button type="submit" class="w-full justify-center" variant="secondary">
-                                            <x-heroicon-o-arrow-path class="h-4 w-4" aria-hidden="true" />
-                                            <span>Regresar a pendiente</span>
-                                        </x-button>
-                                    </form>
-                                @endif
-
-                                    <div x-data="{ openReject: false }" class="rounded-2xl border border-[#f4dddd] bg-white p-4">
-                                    <button type="button" @click="openReject = !openReject" class="flex w-full items-center justify-between text-left text-sm font-semibold text-[#b42323]">
-                                        <span>Rechazar solicitud</span>
-                                        <x-heroicon-o-chevron-down x-show="!openReject" class="h-4 w-4" aria-hidden="true" />
-                                        <x-heroicon-o-chevron-up x-show="openReject" class="h-4 w-4" aria-hidden="true" />
-                                    </button>
-                                    <div x-show="openReject" x-cloak class="mt-4 space-y-3">
+                                @if ($statusEnum === \App\Enums\SolicitudStatus::PENDIENTE_JEFE)
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA])
                                         <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="hidden" name="estatus" value="rechazada">
-                                                <div class="space-y-2">
-                                                    <x-form.label for="motivo_rechazo" :value="__('Motivo del rechazo')" />
-                                                    <x-form.textarea id="motivo_rechazo" name="motivo_rechazo" required rows="3" placeholder="Describe brevemente el motivo del rechazo" />
-                                                    <x-form.error :messages="$errors->get('motivo_rechazo')" />
-                                                </div>
-                                            <x-button type="submit" class="w-full justify-center" variant="danger">
-                                                <x-heroicon-o-x-circle class="h-4 w-4" aria-hidden="true" />
-                                                <span>Confirmar rechazo</span>
+                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA->value }}">
+                                            <x-button type="submit" class="w-full justify-center" variant="primary">
+                                                <x-heroicon-o-check class="h-4 w-4" aria-hidden="true" />
+                                                <span>Enviar a farmacia</span>
                                             </x-button>
                                         </form>
-                                    </div>
-                                </div>
+                                    @endcan
+                                @elseif ($statusEnum === \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA)
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::APROBADA])
+                                        <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::APROBADA->value }}">
+                                            <x-button type="submit" class="w-full justify-center" variant="primary">
+                                                <x-heroicon-o-check class="h-4 w-4" aria-hidden="true" />
+                                                <span>Marcar como aprobada</span>
+                                            </x-button>
+                                        </form>
+                                    @endcan
+                                @elseif ($statusEnum === \App\Enums\SolicitudStatus::APROBADA)
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA])
+                                        <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA->value }}">
+                                            <x-button type="submit" class="w-full justify-center" variant="secondary">
+                                                <x-heroicon-o-arrow-path class="h-4 w-4" aria-hidden="true" />
+                                                <span>Regresar a farmacia</span>
+                                            </x-button>
+                                        </form>
+                                    @endcan
+                                @elseif ($statusEnum === \App\Enums\SolicitudStatus::RECHAZADA)
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::PENDIENTE_JEFE])
+                                        <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::PENDIENTE_JEFE->value }}">
+                                            <x-button type="submit" class="w-full justify-center" variant="secondary">
+                                                <x-heroicon-o-arrow-path class="h-4 w-4" aria-hidden="true" />
+                                                <span>Reabrir validación</span>
+                                            </x-button>
+                                        </form>
+                                    @endcan
+                                @endif
 
-                                @if ($solicitud->estatus === 'aprobada')
+                                @if (in_array($statusEnum, [\App\Enums\SolicitudStatus::PENDIENTE_JEFE, \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA, \App\Enums\SolicitudStatus::APROBADA], true))
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::RECHAZADA])
+                                        <div x-data="{ openReject: false }" class="rounded-2xl border border-[#f4dddd] bg-white p-4">
+                                        <button type="button" @click="openReject = !openReject" class="flex w-full items-center justify-between text-left text-sm font-semibold text-[#b42323]">
+                                            <span>Rechazar solicitud</span>
+                                            <x-heroicon-o-chevron-down x-show="!openReject" class="h-4 w-4" aria-hidden="true" />
+                                            <x-heroicon-o-chevron-up x-show="openReject" class="h-4 w-4" aria-hidden="true" />
+                                        </button>
+                                        <div x-show="openReject" x-cloak class="mt-4 space-y-3">
+                                            <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::RECHAZADA->value }}">
+                                                    <div class="space-y-2">
+                                                        <x-form.label for="motivo_rechazo" :value="__('Motivo del rechazo')" />
+                                                        <x-form.textarea id="motivo_rechazo" name="motivo_rechazo" required rows="3" placeholder="Describe brevemente el motivo del rechazo" />
+                                                        <x-form.error :messages="$errors->get('motivo_rechazo')" />
+                                                    </div>
+                                                <x-button type="submit" class="w-full justify-center" variant="danger">
+                                                    <x-heroicon-o-x-circle class="h-4 w-4" aria-hidden="true" />
+                                                    <span>Confirmar rechazo</span>
+                                                </x-button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    @endcan
+                                @endif
+
+                                @if ($statusEnum === \App\Enums\SolicitudStatus::APROBADA)
                                     <div class="pt-2">
                                         <x-button href="{{ route('entregas.create-from-solicitud', $solicitud) }}" class="w-full justify-center" variant="secondary">
                                             <x-heroicon-o-truck class="h-4 w-4" aria-hidden="true" />
@@ -139,8 +170,8 @@
                             @forelse ($solicitud->detalles as $detalle)
                                 <div class="flex flex-wrap items-center gap-4 bg-white px-5 py-4">
                                     <div class="flex-1">
-                                        <p class="text-sm font-semibold text-slate-900">{{ $detalle->producto->nombre }}</p>
-                                        <p class="text-xs text-slate-500">Código: {{ $detalle->producto->clave }}</p>
+                                        <p class="text-sm font-semibold text-slate-900">{{ $detalle->producto?->descripcion ?? '—' }}</p>
+                                        <p class="text-xs text-slate-500">Clave: {{ $detalle->producto?->clave ?? '—' }}</p>
                                     </div>
                                     <div class="flex w-full max-w-xs items-center justify-between gap-4 text-sm sm:w-auto">
                                         <span class="rounded-full bg-[#f1f8ff] px-3 py-1 font-semibold text-[#1c4ed8]">Solicitado: {{ $detalle->cantidad_solicitada }}</span>

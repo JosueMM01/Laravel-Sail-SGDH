@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SolicitudStatus;
+use App\Events\SolicitudStatusChanged;
 use App\Models\Entrega;
 use App\Models\Solicitud;
 use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Support\AdminAudit;
 
 class EntregaController extends Controller
 {
     public function index()
     {
         $entregas = Entrega::query()
-            ->with(['area', 'usuarioEntrega', 'solicitud'])
+            ->with(['area', 'usuarioEntrega', 'solicitud', 'detalles.lote.producto'])
             ->withCount('detalles')
             ->latest('fecha_entrega')
             ->paginate(12);
@@ -27,11 +30,11 @@ class EntregaController extends Controller
      */
     public function createFromSolicitud(Solicitud $solicitud)
     {
-        if ($solicitud->estatus !== 'aprobada') {
+        if ($solicitud->status() !== SolicitudStatus::APROBADA) {
             return back()->with('error', 'Solo se pueden surtir solicitudes aprobadas.');
         }
-        
-        $solicitud->load(['detalles.producto.lotes' => function($q) {
+
+        $solicitud->load(['detalles.producto.lotes' => function ($q) {
             // Cargar solo lotes vigentes con stock, ordenados por caducidad (FIFO)
             $q->where('cantidad_actual', '>', 0)
               ->where('fecha_caducidad', '>=', now())
@@ -46,6 +49,8 @@ class EntregaController extends Controller
      */
     public function storeFromSolicitud(Request $request, Solicitud $solicitud)
     {
+        $actor = Auth::user();
+
         try {
             DB::beginTransaction();
 
@@ -61,7 +66,7 @@ class EntregaController extends Controller
             // 2. Procesar cada producto solicitado
             foreach ($solicitud->detalles as $detalle) {
                 $cantidadPendiente = $detalle->cantidad_solicitada;
-                
+
                 // Obtener lotes disponibles ordenados por fecha de caducidad (lo que caduca primero sale primero)
                 $lotes = Lote::where('producto_id', $detalle->producto_id)
                              ->disponibles() // Usa el scope que definimos en el Modelo Lote
@@ -69,7 +74,9 @@ class EntregaController extends Controller
                              ->get();
 
                 foreach ($lotes as $lote) {
-                    if ($cantidadPendiente <= 0) break;
+                    if ($cantidadPendiente <= 0) {
+                        break;
+                    }
 
                     // Cuánto podemos tomar de este lote
                     $tomar = min($cantidadPendiente, $lote->cantidad_actual);
@@ -91,7 +98,33 @@ class EntregaController extends Controller
             }
 
             // 3. Actualizar estatus de la solicitud
-            $solicitud->update(['estatus' => 'surtida']);
+            $solicitud->update(['estatus' => SolicitudStatus::SURTIDA]);
+
+            $dispatchEvent = function () use ($solicitud, $actor): void {
+                event(new SolicitudStatusChanged(
+                    solicitud: $solicitud->fresh(['area', 'usuarioSolicitante']),
+                    status: SolicitudStatus::SURTIDA,
+                    performedBy: $actor
+                ));
+            };
+
+            AdminAudit::record(
+                $request,
+                $entrega,
+                'entrega_registrada',
+                [
+                    'solicitud_id' => $solicitud->id,
+                    'area_id' => $entrega->area_id,
+                    'detalles_registrados' => $entrega->detalles()->count(),
+                ],
+                'Entrega #' . $entrega->id
+            );
+
+            if (app()->runningUnitTests()) {
+                $dispatchEvent();
+            } else {
+                DB::afterCommit($dispatchEvent);
+            }
 
             DB::commit();
             return redirect()->route('solicitudes.show', $solicitud)
@@ -101,5 +134,34 @@ class EntregaController extends Controller
             DB::rollBack();
             return back()->with('error', 'Error al surtir: ' . $e->getMessage());
         }
+    }
+
+    public function show(Entrega $entrega)
+    {
+        $entrega->load([
+            'area',
+            'usuarioEntrega',
+            'solicitud.detalles.producto',
+            'detalles.lote.producto',
+        ]);
+
+        $agrupadoPorProducto = $entrega->detalles
+            ->groupBy(fn ($detalle) => $detalle->lote?->producto?->id)
+            ->map(function ($detalles) {
+                $producto = $detalles->first()->lote?->producto;
+
+                return [
+                    'producto' => $producto,
+                    'cantidad_total' => $detalles->sum('cantidad_entregada'),
+                    'lotes' => $detalles->map(function ($detalle) {
+                        return [
+                            'lote' => $detalle->lote,
+                            'cantidad' => $detalle->cantidad_entregada,
+                        ];
+                    }),
+                ];
+            });
+
+        return view('entregas.show', compact('entrega', 'agrupadoPorProducto'));
     }
 }

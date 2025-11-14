@@ -28,9 +28,16 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (Schema::hasColumn('users', 'area_id')) {
-            Schema::table('users', fn(Blueprint $table) => $table->dropColumn('area_id'));
-        }
+        Schema::table('users', function (Blueprint $table) {
+            if (! Schema::hasColumn('users', 'area_id')) {
+                return;
+            }
+
+            // Drop FK before removing the column to keep rollbacks clean.
+            $table->dropForeign(['area_id']);
+            $table->dropColumn('area_id');
+        });
+
         Schema::dropIfExists('areas');
     }
 };

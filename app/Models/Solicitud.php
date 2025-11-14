@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SolicitudStatus;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Auditable;
 
@@ -10,7 +11,15 @@ class Solicitud extends Model
     use Auditable;
     protected $table = 'solicitudes';
     protected $fillable = ['area_id', 'usuario_solicitante_id', 'fecha_solicitud', 'justificacion', 'estatus', 'last_modified_by_user_id'];
-    protected $casts = ['fecha_solicitud' => 'datetime'];
+    protected $casts = [
+        'fecha_solicitud' => 'datetime',
+        'estatus' => SolicitudStatus::class,
+    ];
+
+    public function status(): ?SolicitudStatus
+    {
+        return $this->estatus instanceof SolicitudStatus ? $this->estatus : SolicitudStatus::fromMixed($this->estatus);
+    }
 
     public function area() { return $this->belongsTo(Area::class); }
     public function usuarioSolicitante() { return $this->belongsTo(User::class, 'usuario_solicitante_id'); }
