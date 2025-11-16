@@ -29,6 +29,9 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'rol' => 'personal_area',
+            'is_active' => true,
+            'is_super_admin' => false,
         ];
     }
 
@@ -39,6 +42,24 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'rol' => 'Administrador',
+            'is_active' => true,
+            'is_super_admin' => false,
+        ]);
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'rol' => 'Administrador',
+            'is_active' => true,
+            'is_super_admin' => true,
         ]);
     }
 }

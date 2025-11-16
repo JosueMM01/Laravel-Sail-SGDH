@@ -53,7 +53,7 @@
                                             @endif
                                             @if ($proveedor->correo)
                                                 <p class="flex items-center gap-2 text-slate-600">
-                                                    <x-heroicon-o-envelope class="h-4 w-4" aria-hidden="true" />
+                                                    <x-heroicon-o-at-symbol class="h-4 w-4" aria-hidden="true" />
                                                     <span>{{ $proveedor->correo }}</span>
                                                 </p>
                                             @endif
