@@ -9,7 +9,7 @@
                 </div>
 
                 <x-button href="{{ route('users.create') }}" class="w-full sm:w-auto">
-                    <x-heroicon-o-user-add class="h-5 w-5" aria-hidden="true" />
+                    <x-heroicon-o-user-plus class="h-5 w-5" aria-hidden="true" />
                     <span>{{ __('Registrar nuevo usuario') }}</span>
                 </x-button>
             </div>
@@ -24,6 +24,9 @@
                         'updated_user_profile' => __('Perfil actualizado'),
                         'promoted_to_super_admin' => __('Promoción a super administrador'),
                         'demoted_from_super_admin' => __('Remoción de super administrador'),
+                        'invitation_sent' => __('Invitación enviada'),
+                        'invitation_resent' => __('Invitación reenviada'),
+                        'invitation_accepted' => __('Invitación aceptada'),
                     ];
 
                     $fieldLabels = [
@@ -77,8 +80,8 @@
                     @forelse ($users as $user)
                         @php
                             $isCurrentEdit = $currentEditId === $user->id;
-                            $normalizedRole = strtolower($user->rol) === 'administrador' ? 'admin_farmacia' : $user->rol;
-                            $displayRole = $roleOptions[$normalizedRole] ?? \Illuminate\Support\Str::headline($user->rol);
+                            $roleValue = $user->role()?->value ?? $user->rol;
+                            $displayRole = $user->roleLabel();
                             $lastAudit = $user->latestAdminAudit;
                             $auditMetadata = $lastAudit && is_array($lastAudit->metadata) ? $lastAudit->metadata : [];
                             $auditChanges = $auditMetadata ? \Illuminate\Support\Arr::get($auditMetadata, 'changes', []) : [];
@@ -86,7 +89,7 @@
                                 ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_name')
                                 ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_email');
                             $editName = $isCurrentEdit ? old('name', $user->name) : $user->name;
-                            $editRole = $isCurrentEdit ? old('rol', $normalizedRole) : $normalizedRole;
+                            $editRole = $isCurrentEdit ? old('rol', $roleValue) : $roleValue;
                             $editArea = $isCurrentEdit ? old('area_id', $user->area_id) : $user->area_id;
                         @endphp
 
@@ -115,6 +118,16 @@
                                             {{ __('Super administrador') }}
                                         </span>
                                     @endif
+
+                                    @if ($user->hasPendingInvitation())
+                                        <span class="inline-flex w-fit rounded-full bg-[#fef3c7] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#b45309]">
+                                            {{ __('Invitación pendiente') }}
+                                        </span>
+                                    @elseif ($user->invitation_accepted_at)
+                                        <span class="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#006600]">
+                                            {{ __('Acceso activado') }} • {{ $user->invitation_accepted_at->format('d/m/Y') }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 
@@ -136,6 +149,13 @@
                                     <span class="font-semibold text-slate-700">{{ __('Última actualización:') }}</span>
                                     {{ $user->updated_at?->format('d/m/Y H:i') ?? '—' }}
                                 </p>
+
+                                @if ($user->invitation_sent_at)
+                                    <p>
+                                        <span class="font-semibold text-slate-700">{{ __('Invitación enviada:') }}</span>
+                                        {{ $user->invitation_sent_at->format('d/m/Y H:i') }}
+                                    </p>
+                                @endif
 
                                 @if ($lastAudit)
                                     <p>
@@ -174,8 +194,8 @@
                             @forelse ($users as $user)
                                 @php
                                     $isCurrentEdit = $currentEditId === $user->id;
-                                    $normalizedRole = strtolower($user->rol) === 'administrador' ? 'admin_farmacia' : $user->rol;
-                                    $displayRole = $roleOptions[$normalizedRole] ?? \Illuminate\Support\Str::headline($user->rol);
+                                    $roleValue = $user->role()?->value ?? $user->rol;
+                                    $displayRole = $user->roleLabel();
                                     $lastAudit = $user->latestAdminAudit;
                                     $auditMetadata = $lastAudit && is_array($lastAudit->metadata) ? $lastAudit->metadata : [];
                                     $auditChanges = $auditMetadata ? \Illuminate\Support\Arr::get($auditMetadata, 'changes', []) : [];
@@ -183,7 +203,7 @@
                                         ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_name')
                                         ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_email');
                                     $editName = $isCurrentEdit ? old('name', $user->name) : $user->name;
-                                    $editRole = $isCurrentEdit ? old('rol', $normalizedRole) : $normalizedRole;
+                                    $editRole = $isCurrentEdit ? old('rol', $roleValue) : $roleValue;
                                     $editArea = $isCurrentEdit ? old('area_id', $user->area_id) : $user->area_id;
                                 @endphp
 
@@ -219,6 +239,16 @@
                                             @if ($user->is_super_admin)
                                                 <span class="inline-flex w-fit rounded-full bg-[#0033cc]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#0033cc]">
                                                     {{ __('Super administrador') }}
+                                                </span>
+                                            @endif
+
+                                            @if ($user->hasPendingInvitation())
+                                                <span class="inline-flex w-fit rounded-full bg-[#fef3c7] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b45309]">
+                                                    {{ __('Invitación pendiente') }}
+                                                </span>
+                                            @elseif ($user->invitation_accepted_at)
+                                                <span class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#006600]">
+                                                    {{ __('Acceso activado') }} • {{ $user->invitation_accepted_at->format('d/m/Y') }}
                                                 </span>
                                             @endif
                                         </div>

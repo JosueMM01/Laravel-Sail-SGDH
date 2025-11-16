@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-auth-card>
         <div class="mb-4 rounded-2xl border border-[#d7f0d7] bg-white/80 px-4 py-3 text-sm text-slate-600">
-            {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+            {{ __('Esta es un área segura de la aplicación. Confirma tu contraseña antes de continuar.') }}
         </div>
 
         <!-- Validation Errors -->
@@ -15,7 +15,7 @@
                 <div class="space-y-2">
                     <x-form.label
                         for="password"
-                        :value="__('Password')"
+                        :value="__('Contraseña')"
                     />
 
                     <x-form.input-with-icon-wrapper>
@@ -31,14 +31,14 @@
                             name="password"
                             required
                             autocomplete="current-password"
-                            placeholder="{{ __('Password') }}"
+                            placeholder="{{ __('Contraseña') }}"
                         />
                     </x-form.input-with-icon-wrapper>
                 </div>
 
                 <div>
                     <x-button class="justify-center w-full">
-                        {{ __('Confirm') }}
+                        {{ __('Confirmar') }}
                     </x-button>
                 </div>
             </div>

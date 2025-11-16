@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-auth-card>
         <div class="mb-4 rounded-2xl border border-[#d7f0d7] bg-white/80 px-4 py-3 text-sm text-slate-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+            {{ __('¿Olvidaste tu contraseña? Ningún problema. Indícanos tu correo electrónico y te enviaremos un enlace para restablecerla.') }}
         </div>
 
         <!-- Session Status -->
@@ -18,12 +18,12 @@
                 <div class="space-y-2">
                     <x-form.label
                         for="email"
-                        :value="__('Email')"
+                        :value="__('Correo electrónico')"
                     />
 
                     <x-form.input-with-icon-wrapper>
                         <x-slot name="icon">
-                            <x-heroicon-o-mail aria-hidden="true" class="w-5 h-5" />
+                            <x-heroicon-o-envelope aria-hidden="true" class="w-5 h-5" />
                         </x-slot>
 
                         <x-form.input
@@ -35,14 +35,14 @@
                             :value="old('email')"
                             required
                             autofocus
-                            placeholder="{{ __('Email') }}"
+                            placeholder="{{ __('correo@hospital.mx') }}"
                         />
                     </x-form.input-with-icon-wrapper>
                 </div>
 
                 <div>
                     <x-button class="justify-center w-full">
-                        {{ __('Email Password Reset Link') }}
+                        {{ __('Enviar enlace de restablecimiento') }}
                     </x-button>
                 </div>
             </div>

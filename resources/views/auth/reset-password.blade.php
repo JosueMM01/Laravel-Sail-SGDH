@@ -14,7 +14,7 @@
                 <div class="space-y-2">
                     <x-form.label
                         for="email"
-                        :value="__('Email')"
+                        :value="__('Correo electrónico')"
                     />
 
                     <x-form.input
@@ -32,7 +32,7 @@
                 <div class="space-y-2">
                     <x-form.label
                         for="password"
-                        :value="__('Password')"
+                        :value="__('Contraseña nueva')"
                     />
 
                     <x-form.input
@@ -48,7 +48,7 @@
                 <div class="space-y-2">
                     <x-form.label
                         for="password_confirmation"
-                        :value="__('Confirm Password')"
+                        :value="__('Confirmar contraseña')"
                     />
 
                     <x-form.input
@@ -62,7 +62,7 @@
 
                 <div class="flex items-center justify-end">
                     <x-button>
-                        {{ __('Reset Password') }}
+                        {{ __('Restablecer contraseña') }}
                     </x-button>
                 </div>
             </div>

@@ -24,11 +24,16 @@
         <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div class="space-y-6">
                 <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-8 shadow-lg shadow-[#d7f0d7]/30">
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <h3 class="text-xl font-semibold text-slate-900">{{ $producto->descripcion }}</h3>
-                            <p class="mt-1 text-sm text-slate-500">Clave: {{ $producto->clave }}</p>
-                            <p class="mt-1 text-sm text-slate-500">Presentación: {{ $producto->presentacion }}</p>
+                    <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            @if ($producto->image_url)
+                                <img src="{{ $producto->image_url }}" alt="Imagen del producto" class="h-28 w-28 rounded-3xl object-cover shadow" />
+                            @endif
+                            <div>
+                                <h3 class="text-xl font-semibold text-slate-900">{{ $producto->descripcion }}</h3>
+                                <p class="mt-1 text-sm text-slate-500">Clave: {{ $producto->clave }}</p>
+                                <p class="mt-1 text-sm text-slate-500">Presentación: {{ $producto->presentacion }}</p>
+                            </div>
                         </div>
                         <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold {{ $producto->cuadro_basico ? 'bg-[#e7f3ff] text-[#1c4ed8]' : 'bg-[#fff8e6] text-[#b78a1f]' }}">
                             <span class="h-2.5 w-2.5 rounded-full {{ $producto->cuadro_basico ? 'bg-[#1c4ed8]' : 'bg-[#b78a1f]' }}"></span>

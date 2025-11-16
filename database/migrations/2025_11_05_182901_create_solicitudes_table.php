@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SolicitudStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,8 @@ return new class extends Migration
             $table->foreignId('usuario_solicitante_id')->constrained('users')->restrictOnDelete();
             $table->timestamp('fecha_solicitud')->useCurrent();
             $table->text('justificacion')->nullable();
-            $table->enum('estatus', ['pendiente', 'aprobada', 'rechazada', 'surtida'])->default('pendiente');
+            $table->enum('estatus', SolicitudStatus::values())
+                ->default(SolicitudStatus::PENDIENTE_JEFE->value);
             $table->foreignId('last_modified_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });

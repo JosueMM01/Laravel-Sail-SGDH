@@ -47,17 +47,12 @@
                                     <td class="px-5 py-4 text-xs text-slate-500">{{ $solicitud->fecha_solicitud?->format('d/m/Y H:i') ?? '—' }}</td>
                                     <td class="px-5 py-4">
                                         @php
-                                            $statusStyles = [
-                                                'pendiente' => ['badge' => 'bg-[#fff8e6] text-[#b78a1f]', 'dot' => 'bg-[#d19b2a]'],
-                                                'aprobada' => ['badge' => 'bg-[#e9f7e9] text-[#1b7a1b]', 'dot' => 'bg-[#1b7a1b]'],
-                                                'rechazada' => ['badge' => 'bg-[#ffefef] text-[#b42323]', 'dot' => 'bg-[#b42323]'],
-                                                'surtida' => ['badge' => 'bg-[#e7f3ff] text-[#1c4ed8]', 'dot' => 'bg-[#1c4ed8]'],
-                                            ];
-                                            $currentStatus = $statusStyles[$solicitud->estatus] ?? ['badge' => 'bg-[#f1f5f1] text-slate-600', 'dot' => 'bg-slate-400'];
+                                            $statusEnum = $solicitud->status();
+                                            $badge = $statusEnum?->badgeClasses() ?? ['badge' => 'bg-[#f1f5f1] text-slate-600', 'dot' => 'bg-slate-400'];
                                         @endphp
-                                        <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold {{ $currentStatus['badge'] }}">
-                                            <span class="h-2 w-2 rounded-full {{ $currentStatus['dot'] }}"></span>
-                                            <span>{{ ucfirst($solicitud->estatus) }}</span>
+                                        <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold {{ $badge['badge'] }}">
+                                            <span class="h-2 w-2 rounded-full {{ $badge['dot'] }}"></span>
+                                            <span>{{ $statusEnum?->label() ?? ucfirst($solicitud->estatus) }}</span>
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 text-right">

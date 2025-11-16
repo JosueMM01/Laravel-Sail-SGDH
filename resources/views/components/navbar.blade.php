@@ -15,13 +15,13 @@
             sr-text="Alternar menú lateral"
             x-on:click="isSidebarOpen = !isSidebarOpen"
         >
-            <x-heroicon-o-menu
+            <x-heroicon-o-bars-3
                 x-show="!isSidebarOpen"
                 class="h-6 w-6"
                 aria-hidden="true"
             />
 
-            <x-heroicon-o-x
+            <x-heroicon-o-x-mark
                 x-show="isSidebarOpen"
                 class="h-6 w-6"
                 aria-hidden="true"

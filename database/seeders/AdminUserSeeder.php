@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -16,9 +17,9 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'martinezmorenojosue29@gmail.com'],
             [
-                'name' => 'Administrador',
+                'name' => 'Josue Admin',
                 'password' => Hash::make('12345678'),
-                'rol' => 'Administrador',
+                'rol' => UserRole::SUPER_ADMIN->value,
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'is_super_admin' => true,

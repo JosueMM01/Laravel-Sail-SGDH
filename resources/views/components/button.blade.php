@@ -40,6 +40,12 @@
         case 'danger':
             $variantClasses = 'border border-[#f4dddd] bg-[#ffefef] text-[#b42323] shadow-sm hover:bg-[#ffe3e3] focus:ring-[#d64545]/50';
             break;
+        case 'warning':
+            $variantClasses = 'border border-[#fcdba2] bg-[#fff6df] text-[#b8791f] shadow-sm hover:bg-[#ffecca] focus:ring-[#b8791f]/40';
+            break;
+        case 'success':
+            $variantClasses = 'border border-[#cce7cc] bg-[#f1fbf1] text-[#1b7a1b] shadow-sm hover:bg-[#e7f7e7] focus:ring-[#1b7a1b]/40';
+            break;
         case 'ghost':
             $variantClasses = 'border border-transparent bg-transparent text-[#006600] hover:bg-[#f4fbf4] focus:ring-[#006600]/50';
             break;

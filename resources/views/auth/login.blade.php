@@ -56,7 +56,7 @@
                             <label for="email" class="text-xs font-semibold uppercase tracking-wide text-slate-600">Correo electrónico</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-[#009900]">
-                                    <x-heroicon-o-mail class="h-5 w-5" aria-hidden="true" />
+                                    <x-heroicon-o-envelope class="h-5 w-5" aria-hidden="true" />
                                 </span>
                                 <input
                                     id="email"
@@ -66,7 +66,7 @@
                                     autocomplete="email"
                                     required
                                     autofocus
-                                    placeholder="tucorreo@hospital.mx"
+                                    placeholder="tucorreo@gmail.com"
                                     class="w-full rounded-2xl border border-[#d7f0d7] bg-white py-3 pl-12 pr-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/80"
                                 >
                             </div>
@@ -115,7 +115,7 @@
                             type="submit"
                             class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#006600] via-[#009900] to-[#0033cc] py-3 text-sm font-semibold text-white shadow-lg shadow-[#009900]/25 transition hover:from-[#005500] hover:via-[#007700] hover:to-[#002bb8] focus:outline-none focus:ring-2 focus:ring-[#006600] focus:ring-offset-2 focus:ring-offset-white"
                         >
-                            <x-heroicon-o-login class="h-6 w-6" aria-hidden="true" />
+                            <x-heroicon-o-arrow-right-on-rectangle class="h-6 w-6" aria-hidden="true" />
                             <span>Iniciar sesión</span>
                         </button>
                     </form>
