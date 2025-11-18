@@ -3,7 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>SGDH | Sistema de Gestión de Dotaciones Hospitalarias</title>
+		<title>{{ config('app.name', 'SGDH') }} | Plataforma integral para farmacia hospitalaria</title>
+		<link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
 	</head>
 	<body class="antialiased">
@@ -19,8 +20,8 @@
 					<div class="flex items-center gap-3">
 						<x-application-logo class="h-12 w-auto" />
 						<div>
-							<p class="text-lg font-semibold">Sistema de Gestión de Dotaciones Hospitalarias</p>
-							<p class="text-sm text-slate-600">Control preciso de medicamentos y suministros</p>
+							<p class="text-lg font-semibold">SGDH · Solución digital para farmacia hospitalaria</p>
+							<p class="text-sm text-slate-600">Inventario clínico trazable, auditable y listo para decisiones</p>
 						</div>
 					</div>
 
@@ -50,15 +51,15 @@
 				<section class="grid gap-12 rounded-[40px] border border-slate-200/60 bg-white/70 p-10 shadow-2xl backdrop-blur-xl lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center">
 					<div class="space-y-8">
 						<span class="inline-flex items-center gap-2 rounded-full bg-[#e6f7e6] px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">
-							Dotaciones
+							Farmacia hospitalaria
 						</span>
 						<h1 class="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
-							Gestión inteligente de medicamentos y productos hospitalarios
+							Control clínico del inventario con trazabilidad certificada
 						</h1>
 						<p class="text-lg text-slate-600">
-							SGDH centraliza el inventario farmacéutico y de insumos clínicos para garantizar disponibilidad, trazabilidad y cumplimiento sanitario en cada área de tu hospital.
+							SGDH coordina compras, almacén y unidades médicas en un solo flujo para garantizar cobertura terapéutica, reducir mermas y sostener auditorías regulatorias sin depender de hojas de cálculo.
 						</p>
-						<div class="flex flex-wrap gap-4">
+						<div class="grid gap-4 sm:grid-cols-2">
 							<div class="flex items-center gap-3 rounded-2xl border border-[#d7f0d7] bg-white px-5 py-4 shadow-sm">
 								<div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#006600] via-[#009900] to-[#0033cc] text-white">
 									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5">
@@ -66,8 +67,8 @@
 									</svg>
 								</div>
 								<div>
-									<p class="text-sm font-semibold text-slate-900">Reposiciones automáticas</p>
-									<p class="text-xs text-slate-500">Alertas por mínimos y lotes críticos</p>
+									<p class="text-sm font-semibold text-slate-900">Alertas accionables</p>
+									<p class="text-xs text-slate-500">Stock mínimo, caducidades y reservas clínicas</p>
 								</div>
 							</div>
 							<div class="flex items-center gap-3 rounded-2xl border border-[#d7f0d7] bg-white px-5 py-4 shadow-sm">
@@ -78,8 +79,8 @@
 									</svg>
 								</div>
 								<div>
-									<p class="text-sm font-semibold text-slate-900">Roles y responsables</p>
-									<p class="text-xs text-slate-500">Entrega verificada en cada servicio</p>
+									<p class="text-sm font-semibold text-slate-900">Roles auditables</p>
+									<p class="text-xs text-slate-500">Firma digital y bitácora por servicio</p>
 								</div>
 							</div>
 						</div>
@@ -107,28 +108,28 @@
 
 					<div class="relative">
 						<div class="rounded-[36px] border border-[#d7f0d7] bg-white px-8 py-8 shadow-2xl">
-							<h2 class="text-xl font-semibold text-slate-900">Estado de inventario</h2>
-							<p class="mt-2 text-sm text-slate-500">Indicadores clave para anticipar dotaciones.</p>
+							<h2 class="text-xl font-semibold text-slate-900">Canales institucionales</h2>
+							<p class="mt-2 text-sm text-slate-500">Medios oficiales para coordinación entre farmacia, almacén y direcciones clínicas.</p>
 							<div class="mt-6 grid gap-4 sm:grid-cols-2">
-								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-4 shadow-inner">
-									<p class="text-xs uppercase tracking-wide text-[#009900]">Medicamentos críticos</p>
-									<p class="mt-2 text-3xl font-semibold text-slate-900">42 lotes</p>
-									<span class="text-xs text-[#006600]">+8 repuestos programados</span>
+								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-5 shadow-inner">
+									<p class="text-xs uppercase tracking-wide text-[#009900]">Mesa de ayuda central</p>
+									<p class="mt-2 text-xl font-semibold text-slate-900 break-words">334 282 2799</p>
+									<span class="text-xs text-[#006600]">Extensión única para requerimientos operativos</span>
 								</div>
-								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-4 shadow-inner">
-									<p class="text-xs uppercase tracking-wide text-[#0033cc]">Caducidad próxima</p>
-									<p class="mt-2 text-3xl font-semibold text-slate-900">15 días</p>
-									<span class="text-xs text-[#006600]">Revisar antibióticos pediátricos</span>
+								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-5 shadow-inner">
+									<p class="text-xs uppercase tracking-wide text-[#0033cc]">Correo operativo</p>
+									<p class="mt-2 text-xl font-semibold text-slate-900 break-words">contacto@sgdh.systems</p>
+									<span class="text-xs text-[#006600]">Para notificaciones, acuerdos y minutas</span>
 								</div>
-								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-4 shadow-inner">
-									<p class="text-xs uppercase tracking-wide text-[#009900]">Órdenes en tránsito</p>
-									<p class="mt-2 text-3xl font-semibold text-slate-900">9 proveedores</p>
-									<span class="text-xs text-[#0033cc]">Entrega estimada 48 hrs</span>
+								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-5 shadow-inner">
+									<p class="text-xs uppercase tracking-wide text-[#009900]">Coordinación clínica</p>
+									<p class="mt-2 text-sm font-semibold text-slate-900">Seguimiento a solicitudes interservicios y validaciones.</p>
+									<span class="text-xs text-[#0033cc]">Reportes semanales compartidos con jefaturas</span>
 								</div>
-								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-4 shadow-inner">
-									<p class="text-xs uppercase tracking-wide text-[#0033cc]">Cobertura de piso</p>
-									<p class="mt-2 text-3xl font-semibold text-slate-900">96%</p>
-									<span class="text-xs text-[#006600]">Reabasto completo en 4 horas</span>
+								<div class="rounded-2xl border border-[#e3f6e3] bg-[#f6fdf6] p-5 shadow-inner">
+									<p class="text-xs uppercase tracking-wide text-[#0033cc]">Documentación</p>
+									<p class="mt-2 text-sm font-semibold text-slate-900">Manual de operación, checklist de calidad y bitácoras.</p>
+									<span class="text-xs text-[#006600]">Disponible en la intranet institucional</span>
 								</div>
 							</div>
 						</div>
@@ -138,21 +139,21 @@
 
 				<section class="mt-24 grid gap-8 lg:grid-cols-3">
 					<div class="rounded-[30px] border border-[#d7f0d7] bg-white p-6 shadow-xl">
-						<h3 class="text-lg font-semibold text-slate-900">Flujo de abastecimiento confiable</h3>
+						<h3 class="text-lg font-semibold text-slate-900">Planeación basada en consumo real</h3>
 						<p class="mt-3 text-sm text-slate-600">
-							Genera solicitudes automáticas, valida lotes y consolida recepciones en una sola línea de tiempo para cada almacén.
+							Concilia entregas con las recetas electrónicas y ajusta el presupuesto mensual antes de que el desabasto aparezca en piso.
 						</p>
 					</div>
 					<div class="rounded-[30px] border border-[#d7f0d7] bg-white p-6 shadow-xl">
-						<h3 class="text-lg font-semibold text-slate-900">Control de caducidades y series</h3>
+						<h3 class="text-lg font-semibold text-slate-900">Cumplimiento normativo continuo</h3>
 						<p class="mt-3 text-sm text-slate-600">
-							Registra lotes, fechas críticas y números de serie para bloquear automáticamente productos vencidos en el punto de entrega.
+							Bitácoras automáticas, doble validación y evidencia fotográfica para auditorías COFEPRIS e ISO 9001.
 						</p>
 					</div>
 					<div class="rounded-[30px] border border-[#d7f0d7] bg-white p-6 shadow-xl">
-						<h3 class="text-lg font-semibold text-slate-900">Reportes para decisiones rápidas</h3>
+						<h3 class="text-lg font-semibold text-slate-900">KPIs ejecutivos sin datos sensibles</h3>
 						<p class="mt-3 text-sm text-slate-600">
-							Analiza consumo por servicio, proyecciones de cobertura y presupuesto ejecutado con dashboards listos para dirección.
+							Comparte tendencias y razones de desvío con dirección, omitiendo nombres de pacientes o lotes específicos.
 						</p>
 					</div>
 				</section>
@@ -160,23 +161,23 @@
 				<section class="mt-24 rounded-[36px] border border-[#d7f0d7] bg-white p-10 shadow-2xl">
 					<div class="grid gap-12 lg:grid-cols-2 lg:items-center">
 						<div class="space-y-4">
-							<h3 class="text-2xl font-semibold text-slate-900">Un proceso claro para cada dotación</h3>
+							<h3 class="text-2xl font-semibold text-slate-900">Flujo operativo recomendado</h3>
 							<p class="text-sm text-slate-600">
-								Diseñamos SGDH para el equipo de farmacia y almacén hospitalario: fácil de operar, auditable y listo para integrarse con tus sistemas actuales.
+								Integra SGDH con tu ERP o HIS y habilita notificaciones orientadas a acción para mantener el nivel de servicio clínico.
 							</p>
 						</div>
 						<ol class="space-y-4 text-sm">
 							<li class="flex items-start gap-4 rounded-2xl border border-[#d7f0d7] bg-[#f6fdf6] px-5 py-4">
 								<span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#006600] via-[#009900] to-[#0033cc] text-sm font-semibold text-white">1</span>
-								<p class="text-slate-700">Recepción digital de pedidos con validación de lotes y cantidades.</p>
+								<p class="text-slate-700">Registro digital de recepciones con documentos adjuntos y responsables.</p>
 							</li>
 							<li class="flex items-start gap-4 rounded-2xl border border-[#d7f0d7] bg-[#f6fdf6] px-5 py-4">
 								<span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#006600] via-[#009900] to-[#0033cc] text-sm font-semibold text-white">2</span>
-								<p class="text-slate-700">Asignación a servicios y unidades con firma responsable en cada entrega.</p>
+								<p class="text-slate-700">Asignación automática a servicios con control de lotes, series y temperatura.</p>
 							</li>
 							<li class="flex items-start gap-4 rounded-2xl border border-[#d7f0d7] bg-[#f6fdf6] px-5 py-4">
 								<span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#006600] via-[#009900] to-[#0033cc] text-sm font-semibold text-white">3</span>
-								<p class="text-slate-700">Reportes automáticos sobre consumo, caducidades y reposiciones necesarias.</p>
+								<p class="text-slate-700">Alertas y reportes para planear reposiciones y auditorías preventivas.</p>
 							</li>
 						</ol>
 					</div>
@@ -184,21 +185,21 @@
 
 				<section class="mt-20 grid gap-10 rounded-[36px] border border-[#d7f0d7] bg-gradient-to-r from-[#006600]/15 via-[#009900]/12 to-[#0033cc]/12 px-8 py-12 shadow-2xl">
 					<div class="space-y-3">
-						<h3 class="text-3xl font-semibold text-slate-900">Listos para colaborar contigo</h3>
+						<h3 class="text-3xl font-semibold text-slate-900">Recursos para equipos internos</h3>
 						<p class="text-sm text-slate-600">
-							Nuestro equipo acompaña la implementación, capacitación y soporte continuo para que cada dotación llegue justo a tiempo.
+							Concentra la información clave para farmacia, dirección médica, finanzas y TI desde un mismo punto.
 						</p>
 					</div>
 					<div class="grid gap-6 sm:grid-cols-2">
 						<div class="rounded-2xl border border-[#d7f0d7] bg-white p-5 shadow-sm">
-							<p class="text-xs uppercase tracking-wide text-[#009900]">Contacto</p>
-							<p class="mt-1 text-lg font-semibold text-slate-900">contacto@sgdh.com</p>
-							<p class="text-xs text-slate-600">Coordinamos una demo personalizada</p>
+							<p class="text-xs uppercase tracking-wide text-[#009900]">Mesa de coordinación</p>
+							<p class="mt-1 text-lg font-semibold text-slate-900">contacto@sgdh.systems</p>
+							<p class="text-xs text-slate-600">Comunicación oficial para acuerdos inter-área</p>
 						</div>
 						<div class="rounded-2xl border border-[#d7f0d7] bg-white p-5 shadow-sm">
-							<p class="text-xs uppercase tracking-wide text-[#0033cc]">Soporte</p>
-							<p class="mt-1 text-lg font-semibold text-slate-900">(55) 1234 5678</p>
-							<p class="text-xs text-slate-600">Atención 24/7 para personal autorizado</p>
+							<p class="text-xs uppercase tracking-wide text-[#0033cc]">Soporte operativo</p>
+							<p class="mt-1 text-lg font-semibold text-slate-900">334 282 2799</p>
+							<p class="text-xs text-slate-600">Disponibilidad para incidencias y mantenimiento</p>
 						</div>
 					</div>
 				</section>

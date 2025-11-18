@@ -7,3 +7,26 @@
 .dark .ps__rail-x {
     background-color: transparent !important;
 }
+
+@layer components {
+    .ui-scroll {
+        @apply -mx-4 sm:mx-0;
+    }
+
+    .ui-scroll > table {
+        @apply min-w-full align-top;
+    }
+}
+
+.ui-scroll::-webkit-scrollbar {
+    height: 0.55rem;
+}
+
+.ui-scroll::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.ui-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.5);
+    border-radius: 9999px;
+}

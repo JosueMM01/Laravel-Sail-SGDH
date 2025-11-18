@@ -1,29 +1,31 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
-                <h2 class="mt-2 text-2xl font-semibold text-slate-900">Detalle del producto</h2>
-                <p class="mt-1 text-sm text-slate-600">Consulta la ficha técnica y los lotes activos.</p>
-            </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
+                    <h2 class="mt-2 text-2xl font-semibold text-slate-900">Detalle del producto</h2>
+                    <p class="mt-1 text-sm text-slate-600">Consulta la ficha técnica y los lotes activos.</p>
+                </div>
 
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <x-button href="{{ route('productos.edit', $producto) }}" variant="secondary" class="w-full sm:w-auto">
-                    <x-heroicon-o-pencil class="h-5 w-5" aria-hidden="true" />
-                    <span>Editar</span>
-                </x-button>
-                <x-button href="{{ route('productos.index') }}" variant="ghost" class="w-full sm:w-auto">
-                    <x-heroicon-o-arrow-left class="h-5 w-5" aria-hidden="true" />
-                    <span>Regresar</span>
-                </x-button>
-            </div>
-        </div>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <x-button href="{{ route('productos.edit', $producto) }}" variant="secondary" class="w-full sm:w-auto">
+                        <x-heroicon-o-pencil class="h-5 w-5" aria-hidden="true" />
+                        <span>Editar</span>
+                    </x-button>
+                    <x-button href="{{ route('productos.index') }}" variant="ghost" class="w-full sm:w-auto">
+                        <x-heroicon-o-arrow-left class="h-5 w-5" aria-hidden="true" />
+                        <span>Regresar</span>
+                    </x-button>
+                </div>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <x-page.shell class="max-w-5xl">
             <div class="space-y-6">
-                <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-8 shadow-lg shadow-[#d7f0d7]/30">
+                <x-page.card padding="p-8">
                     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
                             @if ($producto->image_url)
@@ -70,14 +72,14 @@
                             <p class="text-xs text-slate-500">Registros con inventario disponible</p>
                         </div>
                     </div>
-                </div>
+                </x-page.card>
 
-                <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+                <x-page.card>
                     <h3 class="text-lg font-semibold text-slate-900">Lotes disponibles</h3>
                     <p class="mt-2 text-sm text-slate-600">Ordenados por fecha de caducidad para facilitar el surtido FIFO.</p>
 
-                    <div class="mt-6 overflow-hidden rounded-3xl border border-[#e7f5e7]">
-                        <table class="min-w-full divide-y divide-[#e7f5e7] text-sm text-slate-600">
+                    <x-ui.scroll class="mt-6 rounded-3xl border border-[#e7f5e7]">
+                        <table class="min-w-[720px] divide-y divide-[#e7f5e7] text-sm text-slate-600">
                             <thead class="bg-[#f7fcf7]">
                                 <tr class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
                                     <th class="px-5 py-3 text-left">Lote</th>
@@ -108,9 +110,9 @@
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-                </div>
+                    </x-ui.scroll>
+                </x-page.card>
             </div>
-        </div>
+        </x-page.shell>
     </div>
 </x-app-layout>

@@ -1,22 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
-                <h2 class="mt-2 text-2xl font-semibold text-slate-900">Proveedores</h2>
-                <p class="mt-1 text-sm text-slate-600">Gestiona a los proveedores autorizados para abastecer el almacén.</p>
-            </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
+                    <h2 class="mt-2 text-2xl font-semibold text-slate-900">Proveedores</h2>
+                    <p class="mt-1 text-sm text-slate-600">Gestiona a los proveedores autorizados para abastecer el almacén.</p>
+                </div>
 
-            <x-button href="{{ route('proveedores.create') }}" class="w-full sm:w-auto">
-                <x-heroicon-o-plus class="h-5 w-5" aria-hidden="true" />
-                <span>Nuevo proveedor</span>
-            </x-button>
-        </div>
+                <x-button href="{{ route('proveedores.create') }}" class="w-full sm:w-auto">
+                    <x-heroicon-o-plus class="h-5 w-5" aria-hidden="true" />
+                    <span>Nuevo proveedor</span>
+                </x-button>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+        <x-page.shell>
+            <x-page.card>
                 @php
                     $deleteProveedorId = session('delete_proveedor_id');
                 @endphp
@@ -27,8 +29,8 @@
                     </div>
                 @endif
 
-                <div class="overflow-hidden rounded-3xl border border-[#e7f5e7]">
-                    <table class="min-w-full divide-y divide-[#e7f5e7] text-sm text-slate-600">
+                <x-ui.scroll class="rounded-3xl border border-[#e7f5e7]">
+                    <table class="min-w-[840px] divide-y divide-[#e7f5e7] text-sm text-slate-600">
                         <thead class="bg-[#f7fcf7]">
                             <tr class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
                                 <th class="px-5 py-3 text-left">No. proveedor</th>
@@ -82,7 +84,7 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-4">
-                                        <div class="flex items-center justify-end gap-2">
+                                        <div class="flex flex-wrap items-center justify-end gap-2">
                                             <x-button
                                                 href="{{ route('proveedores.show', $proveedor) }}"
                                                 variant="ghost"
@@ -234,12 +236,12 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
+                </x-ui.scroll>
 
                 <div class="mt-6">
                     {{ $proveedores->links() }}
                 </div>
-            </div>
-        </div>
+            </x-page.card>
+        </x-page.shell>
     </div>
 </x-app-layout>

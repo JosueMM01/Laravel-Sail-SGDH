@@ -5,7 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'K UI') }}</title>
+    @php
+        $appName = config('app.name', 'SGDH');
+        $routeName = \Illuminate\Support\Facades\Route::currentRouteName();
+        $derivedTitle = $title ?? ($pageTitle ?? null);
+
+        if (! $derivedTitle && $routeName) {
+            $segments = explode('.', $routeName);
+            $resourceSegment = $segments[0] ?? '';
+            $actionSegment = $segments[1] ?? null;
+            $actionMap = [
+                'index' => 'Listado',
+                'create' => 'Crear',
+                'edit' => 'Editar',
+                'show' => 'Detalle',
+                'store' => 'Guardar',
+                'update' => 'Actualizar',
+            ];
+
+            $resourceTitle = \Illuminate\Support\Str::of($resourceSegment)
+                ->replace(['-', '_'], ' ')
+                ->headline();
+
+            $actionTitle = $actionSegment
+                ? ($actionMap[$actionSegment] ?? \Illuminate\Support\Str::of($actionSegment)->replace(['-', '_'], ' ')->headline())
+                : null;
+
+            if ($actionTitle && $actionTitle !== 'Index') {
+                $derivedTitle = trim($resourceTitle . ' · ' . $actionTitle);
+            } else {
+                $derivedTitle = trim($resourceTitle) ?: null;
+            }
+
+            if (! $derivedTitle && count($segments) === 1) {
+                $derivedTitle = \Illuminate\Support\Str::of($routeName)->replace(['.', '-', '_'], ' ')->headline();
+            }
+        }
+
+        $fullTitle = $derivedTitle ? $appName . ' | ' . $derivedTitle : $appName;
+    @endphp
+
+    <title>{{ $fullTitle }}</title>
 
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 

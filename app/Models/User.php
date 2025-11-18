@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Notifications\ResetPasswordNotification as SpanishResetPasswordNotification;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -98,5 +99,11 @@ class User extends Authenticatable
     public function invitedBy()
     {
         return $this->belongsTo(self::class, 'invited_by');
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        // Usa una version en espanol del correo de restablecimiento.
+        $this->notify(new SpanishResetPasswordNotification($token));
     }
 }

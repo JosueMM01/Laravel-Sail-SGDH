@@ -1,22 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Operaciones</p>
-                <h2 class="mt-2 text-2xl font-semibold text-slate-900">Reglas de dotación</h2>
-                <p class="mt-1 text-sm text-slate-600">Configura las cantidades diarias que deben surtirse automáticamente por área.</p>
-            </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Operaciones</p>
+                    <h2 class="mt-2 text-2xl font-semibold text-slate-900">Reglas de dotación</h2>
+                    <p class="mt-1 text-sm text-slate-600">Configura las cantidades diarias que deben surtirse automáticamente por área.</p>
+                </div>
 
-            <x-button href="{{ route('dotaciones.create') }}" class="w-full sm:w-auto">
-                <x-heroicon-o-plus class="h-5 w-5" aria-hidden="true" />
-                <span>Nueva regla</span>
-            </x-button>
-        </div>
+                <x-button href="{{ route('dotaciones.create') }}" class="w-full sm:w-auto">
+                    <x-heroicon-o-plus class="h-5 w-5" aria-hidden="true" />
+                    <span>Nueva regla</span>
+                </x-button>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+        <x-page.shell>
+            <x-page.card>
                 <form method="GET" action="{{ route('dotaciones.index') }}" class="mb-6 flex flex-col gap-4 rounded-3xl border border-[#e7f5e7] bg-[#f9fef9] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex flex-col gap-2 sm:flex-1">
                         <x-form.label for="area_id" :value="__('Filtrar por área')" />
@@ -92,8 +94,8 @@
                     </div>
                 @endif
 
-                <div class="overflow-hidden rounded-3xl border border-[#e7f5e7]">
-                    <table class="min-w-full divide-y divide-[#e7f5e7] text-sm text-slate-600">
+                <x-ui.scroll class="rounded-3xl border border-[#e7f5e7]">
+                    <table class="min-w-[960px] divide-y divide-[#e7f5e7] text-sm text-slate-600">
                         <thead class="bg-[#f7fcf7]">
                             <tr class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
                                 <th class="px-5 py-3 text-left">Área</th>
@@ -139,12 +141,12 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
+                </x-ui.scroll>
 
                 <div class="mt-6">
                     {{ $dotaciones->withQueryString()->links() }}
                 </div>
-            </div>
-        </div>
+            </x-page.card>
+        </x-page.shell>
     </div>
 </x-app-layout>

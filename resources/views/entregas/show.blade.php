@@ -1,22 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-4 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Detalle de entrega</p>
-                <h2 class="mt-1 text-2xl font-semibold text-slate-900">{{ $entrega->fecha_entrega?->format('d/m/Y H:i') ?? 'Entrega sin fecha' }}</h2>
-                <p class="mt-1 text-sm text-slate-600">{{ optional($entrega->area)->nombre ?? 'Área desconocida' }} &mdash; {{ ucfirst($entrega->tipo_entrega) }}</p>
-            </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-4 bg-white sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Detalle de entrega</p>
+                    <h2 class="mt-1 text-2xl font-semibold text-slate-900">{{ $entrega->fecha_entrega?->format('d/m/Y H:i') ?? 'Entrega sin fecha' }}</h2>
+                    <p class="mt-1 text-sm text-slate-600">{{ optional($entrega->area)->nombre ?? 'Área desconocida' }} &mdash; {{ ucfirst($entrega->tipo_entrega) }}</p>
+                </div>
 
-            <div class="flex flex-col items-start sm:items-end">
-                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Registró</p>
-                <span class="text-sm font-semibold text-slate-700">{{ optional($entrega->usuarioEntrega)->name ?? 'Usuario desconocido' }}</span>
-            </div>
-        </div>
+                <div class="flex flex-col items-start sm:items-end">
+                    <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Registró</p>
+                    <span class="text-sm font-semibold text-slate-700">{{ optional($entrega->usuarioEntrega)->name ?? 'Usuario desconocido' }}</span>
+                </div>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-6">
-            <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+        <x-page.shell class="max-w-5xl space-y-6">
+            <x-page.card>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-[#e7f5e7] bg-[#f7fcf7] px-5 py-4">
                         <p class="text-xs font-semibold uppercase tracking-[0.25em] text-[#006600]">Solicitada</p>
@@ -48,8 +50,8 @@
                             @endif
                         </div>
 
-                        <div class="mt-4 overflow-hidden rounded-2xl border border-[#f4e4c7]">
-                            <table class="min-w-full divide-y divide-[#f4e4c7] text-sm">
+                        <x-ui.scroll class="mt-4 rounded-2xl border border-[#f4e4c7]">
+                            <table class="min-w-[620px] divide-y divide-[#f4e4c7] text-sm">
                                 <thead class="bg-[#fff1d6] text-xs font-semibold uppercase tracking-[0.2em] text-[#a06c12]">
                                     <tr>
                                         <th class="px-4 py-2 text-left">Producto</th>
@@ -74,7 +76,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
+                        </x-ui.scroll>
 
                         @if (!empty($entrega->observaciones['alertas']))
                             <div class="mt-4 rounded-2xl border border-[#f4dddd] bg-[#ffefef] px-4 py-3 text-sm">
@@ -131,7 +133,7 @@
                         @endforelse
                     </div>
                 </div>
-            </div>
+            </x-page.card>
 
             <div class="flex justify-end">
                 <x-button href="{{ route('entregas.index') }}" variant="secondary">
@@ -139,6 +141,6 @@
                     <span>Volver al historial</span>
                 </x-button>
             </div>
-        </div>
+        </x-page.shell>
     </div>
 </x-app-layout>
