@@ -1,0 +1,61 @@
+sgdh.systems {
+    
+    # Reverse proxy a la aplicación Laravel
+    reverse_proxy app:8000 {
+        # Headers para mantener información del cliente
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Port {server_port}
+        
+        # Health check
+        health_uri /
+        health_interval 30s
+        health_timeout 5s
+    }
+
+    # Logs
+    log {
+        output file /data/access.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format console
+    }
+
+    # Headers de seguridad
+    header {
+        # Habilitar HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Protección XSS
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        
+        # Política de referrer
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Política de permisos
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        
+        # Eliminar header que expone información
+        -Server
+        -X-Powered-By
+    }
+
+    # Compresión
+    encode gzip zstd
+
+    # Límite de tamaño de body (para uploads)
+    request_body {
+        max_size 20MB
+    }
+}
+
+# Redirección www -> sin www (opcional)
+www.sgdh.systems {
+    redir https://sgdh.systems{uri} permanent
+}

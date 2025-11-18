@@ -1,0 +1,56 @@
+# Archivos que no deben incluirse en la imagen Docker
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Desarrollo
+.env
+.env.local
+.env.example
+docker-compose.yml
+docker-compose.override.yml
+docker/deploy/
+docker/prod/.env.production
+
+# IDE
+.idea
+.vscode
+.vs
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Composer
+vendor/
+
+# Laravel
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+
+# Tests
+tests/
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# Docs
+README.md
+README-Docker.md
+CHANGELOG.md
+docs/
+
+# Otros
+*.log
+.DS_Store
+Thumbs.db

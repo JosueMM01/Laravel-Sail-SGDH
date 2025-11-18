@@ -28,7 +28,9 @@ class GoogleLoginController extends Controller
             if ($existingUser) {
                 if (! $existingUser->is_active) {
                     return redirect()->route('login')
-                        ->with('error', 'Tu cuenta ha sido desactivada. Contacta al administrador para restaurar el acceso.');
+                        ->withErrors([
+                            'email' => 'Tu cuenta ha sido desactivada. Contacta al administrador para restaurar el acceso.',
+                        ]);
                 }
 
                 // SI EXISTE: Lo logueamos.
@@ -43,12 +45,16 @@ class GoogleLoginController extends Controller
             } else {
                 // NO EXISTE: Error, no tiene invitación.
                 return redirect()->route('login')
-                    ->with('error', 'Lo sentimos, tu correo no está registrado en el sistema. Pide acceso al administrador.');
+                    ->withErrors([
+                        'email' => 'No encontramos este correo en SGDH. Solicita una invitación al administrador.',
+                    ]);
             }
 
         } catch (\Exception $e) {
             // Error general (ej. el usuario canceló en la ventana de Google)
-            return redirect()->route('login')->with('error', 'Hubo un problema al intentar entrar con Google.');
+            return redirect()->route('login')->withErrors([
+                'email' => 'No pudimos completar el acceso con Google. Inténtalo de nuevo.',
+            ]);
         }
     }
 }

@@ -1,22 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Reportes</p>
-                <h1 class="mt-2 text-2xl font-semibold text-slate-900">Reportes operativos del almacén</h1>
-                <p class="mt-1 text-sm text-slate-600">
-                    Visualiza y descarga indicadores clave en PDF o Excel. Rango activo: <span class="font-semibold text-[#006600]">{{ $range->label() }}</span>.
-                </p>
-            </div>
-            <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
-                <x-report-export-buttons type="consumo-areas" :range="$selectedRange" />
-            </div>
-        </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white/85 sm:flex-row sm:items-center sm:justify-between" padding="px-6 py-5">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Reportes</p>
+                    <h1 class="mt-2 text-2xl font-semibold text-slate-900">Reportes operativos del almacén</h1>
+                    <p class="mt-1 text-sm text-slate-600">
+                        Visualiza y descarga indicadores clave en PDF o Excel. Rango activo: <span class="font-semibold text-[#006600]">{{ $range->label() }}</span>.
+                    </p>
+                </div>
+                <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <x-report-export-buttons type="consumo-areas" :range="$selectedRange" />
+                </div>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/25">
+        <x-page.shell class="max-w-7xl">
+            <x-page.card>
                 <form method="GET" action="{{ route('reportes.index') }}" x-data="{ range: '{{ $selectedRange }}' }" class="grid gap-4 rounded-2xl border border-[#e7f5e7] bg-[#f7fcf7]/60 p-4 sm:grid-cols-4 sm:items-end">
                     <div class="sm:col-span-2">
                         <x-form.label value="Rango de fechas" />
@@ -73,8 +75,32 @@
                                 <x-report-export-buttons type="consumo-areas" :range="$selectedRange" />
                             </div>
                         </header>
-                        <div class="mt-4 overflow-hidden rounded-2xl border border-[#f0f7f0]">
-                            <table class="min-w-full divide-y divide-[#f0f7f0] text-sm">
+                        <div class="mt-4 space-y-3 md:hidden">
+                            @forelse ($areaConsumption->take(5) as $row)
+                                <div class="rounded-2xl border border-[#f0f7f0] bg-white px-4 py-3">
+                                    <p class="text-sm font-semibold text-slate-900">{{ $row->nombre }}</p>
+                                    <dl class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                                        <div>
+                                            <dt class="uppercase tracking-[0.2em] text-[#006600]">Unidades</dt>
+                                            <dd class="text-lg font-bold text-slate-900">{{ number_format($row->total_unidades) }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt class="uppercase tracking-[0.2em] text-[#006600]">Entregas</dt>
+                                            <dd class="text-lg font-bold text-slate-900">{{ number_format($row->total_entregas) }}</dd>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <dt class="uppercase tracking-[0.2em] text-[#006600]">Productos</dt>
+                                            <dd class="text-lg font-bold text-slate-900">{{ number_format($row->productos_unicos) }}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            @empty
+                                <p class="rounded-2xl border border-dashed border-[#f0f7f0] bg-white px-4 py-6 text-center text-sm font-medium text-slate-500">No hay entregas registradas en el rango.</p>
+                            @endforelse
+                        </div>
+
+                        <div class="mt-4 hidden overflow-hidden rounded-2xl border border-[#f0f7f0] md:block">
+                            <table class="w-full divide-y divide-[#f0f7f0] text-sm">
                                 <thead class="bg-[#f7fcf7] text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
                                     <tr>
                                         <th class="px-4 py-3 text-left">Área</th>
@@ -111,8 +137,29 @@
                                 <x-report-export-buttons type="consumo-productos" :range="$selectedRange" />
                             </div>
                         </header>
-                        <div class="mt-4 overflow-hidden rounded-2xl border border-[#f0f7f0]">
-                            <table class="min-w-full divide-y divide-[#f0f7f0] text-sm">
+                        <div class="mt-4 space-y-3 md:hidden">
+                            @forelse ($productConsumption->take(5) as $row)
+                                <div class="rounded-2xl border border-[#f0f7f0] bg-white px-4 py-3">
+                                    <p class="text-sm font-semibold text-slate-900">{{ $row->descripcion }}</p>
+                                    <p class="text-xs text-slate-500">Clave {{ $row->clave }}</p>
+                                    <dl class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                                        <div>
+                                            <dt class="uppercase tracking-[0.2em] text-[#006600]">Unidades</dt>
+                                            <dd class="text-lg font-bold text-slate-900">{{ number_format($row->total_unidades) }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt class="uppercase tracking-[0.2em] text-[#006600]">Áreas</dt>
+                                            <dd class="text-lg font-bold text-slate-900">{{ number_format($row->total_areas) }}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            @empty
+                                <p class="rounded-2xl border border-dashed border-[#f0f7f0] bg-white px-4 py-6 text-center text-sm font-medium text-slate-500">Sin consumos registrados en el rango.</p>
+                            @endforelse
+                        </div>
+
+                        <div class="mt-4 hidden overflow-hidden rounded-2xl border border-[#f0f7f0] md:block">
+                            <table class="w-full divide-y divide-[#f0f7f0] text-sm">
                                 <thead class="bg-[#f7fcf7] text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
                                     <tr>
                                         <th class="px-4 py-3 text-left">Producto</th>
@@ -225,7 +272,7 @@
                         <li>Indicadores de tiempo de atención de solicitudes (desde captura hasta surtido).</li>
                     </ul>
                 </section>
-            </div>
-        </div>
+            </x-page.card>
+        </x-page.shell>
     </div>
 </x-app-layout>
