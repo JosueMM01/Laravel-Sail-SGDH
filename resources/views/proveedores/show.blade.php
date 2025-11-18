@@ -1,29 +1,31 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
-                <h2 class="mt-2 text-2xl font-semibold text-slate-900">Detalle del proveedor</h2>
-                <p class="mt-1 text-sm text-slate-600">Información general y contacto del proveedor seleccionado.</p>
-            </div>
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white/85 sm:flex-row sm:items-center sm:justify-between" padding="px-6 py-5">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Catálogos</p>
+                    <h2 class="mt-2 text-2xl font-semibold text-slate-900">Detalle del proveedor</h2>
+                    <p class="mt-1 text-sm text-slate-600">Información general y contacto del proveedor seleccionado.</p>
+                </div>
 
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <x-button href="{{ route('proveedores.edit', $proveedor) }}" variant="secondary" class="w-full sm:w-auto">
-                    <x-heroicon-o-pencil class="h-5 w-5" aria-hidden="true" />
-                    <span>Editar</span>
-                </x-button>
-                <x-button href="{{ route('proveedores.index') }}" variant="ghost" class="w-full sm:w-auto">
-                    <x-heroicon-o-arrow-left class="h-5 w-5" aria-hidden="true" />
-                    <span>Regresar</span>
-                </x-button>
-            </div>
-        </div>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <x-button href="{{ route('proveedores.edit', $proveedor) }}" variant="secondary" class="w-full sm:w-auto">
+                        <x-heroicon-o-pencil class="h-5 w-5" aria-hidden="true" />
+                        <span>Editar</span>
+                    </x-button>
+                    <x-button href="{{ route('proveedores.index') }}" variant="ghost" class="w-full sm:w-auto">
+                        <x-heroicon-o-arrow-left class="h-5 w-5" aria-hidden="true" />
+                        <span>Regresar</span>
+                    </x-button>
+                </div>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <x-page.shell class="max-w-4xl">
             <div class="space-y-6">
-                <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-8 shadow-lg shadow-[#d7f0d7]/30">
+                <x-page.card padding="p-6 lg:p-8">
                     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-900">{{ $proveedor->razon_social }}</h3>
@@ -71,16 +73,16 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#009900]/80">Dirección</p>
                         <p class="mt-2 text-sm text-slate-600">{{ $proveedor->direccion ?: 'Sin dirección capturada.' }}</p>
                     </div>
-                </div>
+                </x-page.card>
 
-                <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+                <x-page.card>
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-semibold text-slate-900">Historial de lotes</h3>
                         <span class="text-sm font-semibold text-slate-500">{{ $proveedor->lotes_count ?? $proveedor->lotes()->count() }} registros</span>
                     </div>
                     <p class="mt-2 text-sm text-slate-600">Consulta los lotes asociados a este proveedor desde el módulo de compras.</p>
-                </div>
+                </x-page.card>
             </div>
-        </div>
+        </x-page.shell>
     </div>
 </x-app-layout>

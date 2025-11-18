@@ -12,8 +12,15 @@
     <div class="py-12">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-8 shadow-lg shadow-[#d7f0d7]/30">
-                <form method="POST" action="{{ route('productos.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('productos.store') }}" class="space-y-6" enctype="multipart/form-data">
                     @csrf
+                    <div class="space-y-2">
+                        <x-form.label for="image" :value="__('Fotografía (opcional)')" />
+                        <x-form.input id="image" name="image" type="file" accept="image/*" />
+                        <p class="text-xs text-slate-500">Formatos admitidos: JPG, PNG o WebP. Tamaño máximo 2&nbsp;MB.</p>
+                        <x-form.error :messages="$errors->get('image')" />
+                    </div>
+
 
                     <div class="grid gap-6 sm:grid-cols-2">
                         <div class="space-y-2">

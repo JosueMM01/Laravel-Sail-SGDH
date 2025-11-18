@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\AdminAuditLog;
 use App\Models\Area;
 use App\Models\User;
@@ -45,6 +46,24 @@ class ManageUsersTest extends TestCase
             ->assertSessionHas('error');
 
         $this->assertTrue($superAdmin->fresh()->is_active);
+    }
+
+    public function test_admin_listing_excludes_super_admins_from_index(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $superAdmin = User::factory()->superAdmin()->create();
+        $regularUser = User::factory()->create();
+
+        $response = $this->actingAs($admin)->get('/users');
+
+        $response->assertOk();
+
+        $response->assertViewHas('users', function ($paginator) use ($superAdmin, $regularUser) {
+            $ids = $paginator->getCollection()->pluck('id')->all();
+
+            return ! in_array($superAdmin->id, $ids, true)
+                && in_array($regularUser->id, $ids, true);
+        });
     }
 
     public function test_super_admin_cannot_be_deactivated_via_update_form(): void
@@ -233,7 +252,7 @@ class ManageUsersTest extends TestCase
         $user->refresh();
 
         $this->assertSame('Usuario Actualizado', $user->name);
-        $this->assertSame('admin_farmacia', $user->rol);
+    $this->assertSame(UserRole::ADMIN_FARMACIA, $user->role());
         $this->assertSame($area->id, $user->area_id);
 
         $audit = AdminAuditLog::where('target_user_id', $user->id)
@@ -261,7 +280,7 @@ class ManageUsersTest extends TestCase
             ->assertRedirect('/users')
             ->assertSessionHas('error');
 
-        $this->assertSame('Administrador', $superAdmin->fresh()->rol);
+    $this->assertSame(UserRole::SUPER_ADMIN, $superAdmin->fresh()->role());
 
         $this->assertDatabaseMissing('admin_audit_logs', [
             'target_user_id' => $superAdmin->id,
@@ -284,7 +303,7 @@ class ManageUsersTest extends TestCase
             ->assertRedirect('/users')
             ->assertSessionHas('error');
 
-        $this->assertSame('Administrador', $superAdmin->fresh()->rol);
+    $this->assertSame(UserRole::SUPER_ADMIN, $superAdmin->fresh()->role());
 
         $this->assertDatabaseMissing('admin_audit_logs', [
             'target_user_id' => $superAdmin->id,

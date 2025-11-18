@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Aplicación Laravel (SGDH)
+  # ============================================
+  app:
+    image: josuem01/sgdh:latest
+    container_name: sgdh_app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    volumes:
+      - storage_data:/var/www/html/storage/app
+      - logs_data:/var/www/html/storage/logs
+    networks:
+      - sgdh_network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "artisan", "about"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # MySQL Database 8.0
+  # ============================================
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: sgdh_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Database password required}
+      MYSQL_DATABASE: ${DB_DATABASE:-sgdh_production}
+      MYSQL_USER: ${DB_USERNAME:-sgdh_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Database password required}
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - sgdh_network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Caddy Reverse Proxy (HTTPS automático)
+  # ============================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: sgdh_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - sgdh_network
+    depends_on:
+      - app
+    environment:
+      - DOMAIN=${APP_URL:-sgdh.tudominio.com}
+
+# ============================================
+# Volúmenes persistentes
+# ============================================
+volumes:
+  mysql_data:
+    driver: local
+  storage_data:
+    driver: local
+  logs_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+# ============================================
+# Red interna
+# ============================================
+networks:
+  sgdh_network:
+    driver: bridge

@@ -23,6 +23,8 @@ public function up(): void
         // CAMBIO: Nuevos campos
         $table->string('google_id')->nullable()->unique();
         $table->string('rol')->default('personal_area'); // Ej: 'admin_farmacia', 'personal_area'
+        $table->boolean('is_active')->default(true);
+        $table->boolean('is_super_admin')->default(false);
         $table->rememberToken();
         $table->timestamps();
     });

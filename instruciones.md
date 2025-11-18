@@ -115,7 +115,7 @@ El sistema implementa un modelo de seguridad estricto para garantizar que solo e
 * `usuario_solicitante_id` (FK): Usuario creador.
 * `fecha_solicitud`: Timestamp.
 * `justificacion`: Motivo del pedido.
-* `estatus`: 'Pendiente', 'Aprobada', 'Rechazada', 'Surtida'.
+* `estatus`: 'Pendiente_Jefe', 'Pendiente_Farmacia', 'Aprobada', 'Rechazada', 'Surtida'.
 * `last_modified_by_user_id` (FK): Auditoría (quién aprobó en web).
 
 #### `solicitudes_detalles`
@@ -203,3 +203,41 @@ function toggleTheme() {
 ```
 
 Con esto tendrás la paleta aplicada tanto en modo claro como en modo oscuro, manteniendo coherencia semántica (verde para la marca y estados, azul para navegación/encabezados) y controlando el contraste con la variante `brand-dark`.
+
+---
+
+## Fases Próximas (trabajo independiente)
+
+1. **Roles y estados**
+- Definir enum/constantes para `UserRole` (`SUPER_ADMIN`, `ADMIN_FARMACIA`, `JEFE_AREA`, `PERSONAL_AREA`) y validar en modelos, formularios y seeders.
+- Normalizar `SolicitudStatus` con doble flujo: `Pendiente_Jefe → Pendiente_Farmacia → Aprobada/Rechazada → Surtida`. Actualizar migraciones/seeders y documentar transiciones válidas.
+- Ajustar vistas/controladores para mostrar acciones habilitadas según rol y estado actual.
+
+2. **Autorización y filtros**
+- Crear middleware `EnsureRole` reutilizable (permite múltiples roles) e integrarlo en rutas web/API.
+- Implementar `SolicitudPolicy` y `UserPolicy` con scopes para filtrar por rol y `area_id` (ej. un jefe solo ve solicitudes de su área).
+- Añadir pruebas de integración que cubran permisos positivos/negativos.
+
+3. **Auditoría y bitácoras**
+- Ampliar `AdminAuditLog` para registrar todas las acciones en la aplicación web (gestión de usuarios, inventario, solicitudes) incluyendo `performed_by`, `target`, acción, payload y timestamp.
+- Emitir eventos/listeners desde controladores y jobs que disparen los registros; las operaciones móviles (creación de solicitudes) también guardan quién originó el movimiento.
+- Preparar endpoints de consulta de auditoría con filtros de fecha/acción/usuario.
+
+4. **Notificaciones y comunicación**
+- Implementar notificaciones (mail y database) para aprobaciones/rechazos y movimientos críticos del flujo.
+- Exponer endpoints REST para que la app móvil consulte notificaciones o estados de sus solicitudes.
+- Evaluar integración opcional con broadcast/Firebase si se requiere push en tiempo real.
+
+5. **API móvil**
+- Diseñar contrato de endpoints (autenticación, alta de solicitudes, consulta de estados, historial, notificaciones).
+- Implementar controladores API con Sanctum/Passport, reutilizando policies y scopes para garantizar aislamiento por área.
+- Documentar los endpoints (OpenAPI o similar) para facilitar la integración con Android.
+
+6. **Reportes y exportaciones**
+- Integrar librería PDF (`barryvdh/laravel-dompdf` o similar) y crear servicio de reportes con rangos dinámicos (última semana, 15 días, mes, trimestre).
+- Añadir vistas/descargas protegidas para PDF y, en paralelo, preparar exportaciones Excel con `maatwebsite/excel` reutilizando las mismas consultas.
+- Incluir pruebas que aseguren que los filtros temporales generan resultados consistentes.
+
+7. **Invitaciones y recuperación**
+- Diseñar flujo de invitación con tokens firmados y formularios de alta inicial (solo web).
+- Personalizar correos de invitación y alinear el proceso con el restablecimiento de contraseña estándar.

@@ -15,6 +15,24 @@
         <x-heroicon-o-eye class="h-5 w-5" aria-hidden="true" />
     </x-button>
 
+    @can('update', $user)
+        @if ($user->hasPendingInvitation())
+            <form method="POST" action="{{ route('users.resend-invitation', $user) }}">
+                @csrf
+                <x-button
+                    type="submit"
+                    variant="ghost"
+                    size="sm"
+                    srText="{{ __('Reenviar invitación a :name', ['name' => $user->name]) }}"
+                    title="{{ __('Reenviar invitación') }}"
+                >
+                    <x-heroicon-o-paper-airplane class="h-5 w-5" aria-hidden="true" />
+                    <span class="hidden sm:inline">{{ __('Reenviar') }}</span>
+                </x-button>
+            </form>
+        @endif
+    @endcan
+
     @if (! $user->is(auth()->user()) && (! $user->is_super_admin || auth()->user()?->is_super_admin))
         <x-button
             type="button"
@@ -100,6 +118,19 @@
                             <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">{{ __('Fecha de registro') }}</dt>
                             <dd class="mt-1 text-sm text-slate-900">{{ $user->created_at?->format('d/m/Y H:i') ?? '—' }}</dd>
                         </div>
+                        @if ($user->invitation_sent_at)
+                            <div>
+                                <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">{{ __('Última invitación') }}</dt>
+                                <dd class="mt-1 text-sm text-slate-900">
+                                    {{ $user->invitation_sent_at->format('d/m/Y H:i') }}
+                                    @if ($user->hasPendingInvitation())
+                                        <span class="ml-2 inline-flex rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#b45309]">{{ __('Pendiente') }}</span>
+                                    @else
+                                        <span class="ml-2 inline-flex rounded-full bg-[#e9f7e9] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#1b7a1b]">{{ __('Aceptada') }}</span>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
                         <div>
                             <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">{{ __('Estado actual') }}</dt>
                             <dd class="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-900">

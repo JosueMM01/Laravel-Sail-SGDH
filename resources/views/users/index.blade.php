@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col gap-6 rounded-3xl border border-[#c7f0c7] bg-white/85 px-6 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <x-page.shell>
+            <x-page.card class="flex flex-col gap-6 bg-white sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#009900]">Usuarios</p>
                     <h2 class="mt-2 text-2xl font-semibold text-slate-900">{{ __('Usuarios invitados') }}</h2>
@@ -9,21 +9,24 @@
                 </div>
 
                 <x-button href="{{ route('users.create') }}" class="w-full sm:w-auto">
-                    <x-heroicon-o-user-add class="h-5 w-5" aria-hidden="true" />
+                    <x-heroicon-o-user-plus class="h-5 w-5" aria-hidden="true" />
                     <span>{{ __('Registrar nuevo usuario') }}</span>
                 </x-button>
-            </div>
-        </div>
+            </x-page.card>
+        </x-page.shell>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl border border-[#d7f0d7] bg-white/95 p-6 shadow-lg shadow-[#d7f0d7]/30">
+        <x-page.shell>
+            <x-page.card>
                 @php
                     $actionLabels = [
                         'updated_user_profile' => __('Perfil actualizado'),
                         'promoted_to_super_admin' => __('Promoción a super administrador'),
                         'demoted_from_super_admin' => __('Remoción de super administrador'),
+                        'invitation_sent' => __('Invitación enviada'),
+                        'invitation_resent' => __('Invitación reenviada'),
+                        'invitation_accepted' => __('Invitación aceptada'),
                     ];
 
                     $fieldLabels = [
@@ -77,8 +80,8 @@
                     @forelse ($users as $user)
                         @php
                             $isCurrentEdit = $currentEditId === $user->id;
-                            $normalizedRole = strtolower($user->rol) === 'administrador' ? 'admin_farmacia' : $user->rol;
-                            $displayRole = $roleOptions[$normalizedRole] ?? \Illuminate\Support\Str::headline($user->rol);
+                            $roleValue = $user->role()?->value ?? $user->rol;
+                            $displayRole = $user->roleLabel();
                             $lastAudit = $user->latestAdminAudit;
                             $auditMetadata = $lastAudit && is_array($lastAudit->metadata) ? $lastAudit->metadata : [];
                             $auditChanges = $auditMetadata ? \Illuminate\Support\Arr::get($auditMetadata, 'changes', []) : [];
@@ -86,7 +89,7 @@
                                 ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_name')
                                 ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_email');
                             $editName = $isCurrentEdit ? old('name', $user->name) : $user->name;
-                            $editRole = $isCurrentEdit ? old('rol', $normalizedRole) : $normalizedRole;
+                            $editRole = $isCurrentEdit ? old('rol', $roleValue) : $roleValue;
                             $editArea = $isCurrentEdit ? old('area_id', $user->area_id) : $user->area_id;
                         @endphp
 
@@ -115,6 +118,16 @@
                                             {{ __('Super administrador') }}
                                         </span>
                                     @endif
+
+                                    @if ($user->hasPendingInvitation())
+                                        <span class="inline-flex w-fit rounded-full bg-[#fef3c7] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#b45309]">
+                                            {{ __('Invitación pendiente') }}
+                                        </span>
+                                    @elseif ($user->invitation_accepted_at)
+                                        <span class="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#006600]">
+                                            {{ __('Acceso activado') }} • {{ $user->invitation_accepted_at->format('d/m/Y') }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 
@@ -137,6 +150,13 @@
                                     {{ $user->updated_at?->format('d/m/Y H:i') ?? '—' }}
                                 </p>
 
+                                @if ($user->invitation_sent_at)
+                                    <p>
+                                        <span class="font-semibold text-slate-700">{{ __('Invitación enviada:') }}</span>
+                                        {{ $user->invitation_sent_at->format('d/m/Y H:i') }}
+                                    </p>
+                                @endif
+
                                 @if ($lastAudit)
                                     <p>
                                         <span class="font-semibold text-slate-700">{{ __('Última acción admin:') }}</span>
@@ -157,8 +177,8 @@
                     @endforelse
                 </div>
 
-                <div class="hidden rounded-3xl border border-[#e7f5e7] sm:block">
-                    <div class="overflow-x-auto">
+                <div class="hidden sm:block">
+                    <x-ui.scroll class="rounded-3xl border border-[#e7f5e7]">
                         <table class="min-w-[900px] divide-y divide-[#e7f5e7] text-sm text-slate-600 sm:min-w-full">
                         <thead class="bg-[#f7fcf7]">
                             <tr class="text-xs font-semibold uppercase tracking-[0.2em] text-[#006600]">
@@ -174,8 +194,8 @@
                             @forelse ($users as $user)
                                 @php
                                     $isCurrentEdit = $currentEditId === $user->id;
-                                    $normalizedRole = strtolower($user->rol) === 'administrador' ? 'admin_farmacia' : $user->rol;
-                                    $displayRole = $roleOptions[$normalizedRole] ?? \Illuminate\Support\Str::headline($user->rol);
+                                    $roleValue = $user->role()?->value ?? $user->rol;
+                                    $displayRole = $user->roleLabel();
                                     $lastAudit = $user->latestAdminAudit;
                                     $auditMetadata = $lastAudit && is_array($lastAudit->metadata) ? $lastAudit->metadata : [];
                                     $auditChanges = $auditMetadata ? \Illuminate\Support\Arr::get($auditMetadata, 'changes', []) : [];
@@ -183,7 +203,7 @@
                                         ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_name')
                                         ?? \Illuminate\Support\Arr::get($auditMetadata, 'performed_by_email');
                                     $editName = $isCurrentEdit ? old('name', $user->name) : $user->name;
-                                    $editRole = $isCurrentEdit ? old('rol', $normalizedRole) : $normalizedRole;
+                                    $editRole = $isCurrentEdit ? old('rol', $roleValue) : $roleValue;
                                     $editArea = $isCurrentEdit ? old('area_id', $user->area_id) : $user->area_id;
                                 @endphp
 
@@ -221,6 +241,16 @@
                                                     {{ __('Super administrador') }}
                                                 </span>
                                             @endif
+
+                                            @if ($user->hasPendingInvitation())
+                                                <span class="inline-flex w-fit rounded-full bg-[#fef3c7] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b45309]">
+                                                    {{ __('Invitación pendiente') }}
+                                                </span>
+                                            @elseif ($user->invitation_accepted_at)
+                                                <span class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#006600]">
+                                                    {{ __('Acceso activado') }} • {{ $user->invitation_accepted_at->format('d/m/Y') }}
+                                                </span>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-5 py-4">
@@ -237,13 +267,13 @@
                             @endforelse
                         </tbody>
                         </table>
-                    </div>
+                    </x-ui.scroll>
                 </div>
 
                 <div class="mt-6">
                     {{ $users->links() }}
                 </div>
-            </div>
-        </div>
+            </x-page.card>
+        </x-page.shell>
     </div>
 </x-app-layout>
