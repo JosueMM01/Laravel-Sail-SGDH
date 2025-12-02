@@ -72,7 +72,7 @@ class UserController extends Controller
             'email' => $request->email,
             'rol' => $role?->value,
             'area_id' => $request->area_id,
-            'password' => null, // ¡CLAVE! Esto permite el login solo con Google al inicio
+            'password' => null, // Esto permite el login solo con Google al inicio
             'is_active' => true,
             'is_super_admin' => $role === UserRole::SUPER_ADMIN,
         ]);

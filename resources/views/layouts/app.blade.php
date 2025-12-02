@@ -89,11 +89,13 @@
                 <x-navbar />
 
                 <!-- Page Heading -->
-                <header>
-                    <div class="p-4 sm:p-6">
-                        {{ $header }}
-                    </div>
-                </header>
+                @isset($header)
+                    <header>
+                        <div class="p-4 sm:p-6">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
 
                 <!-- Page Content -->
                 <main class="px-4 sm:px-6 flex-1 pb-24 md:pb-16">

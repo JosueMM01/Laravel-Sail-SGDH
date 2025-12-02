@@ -57,3 +57,46 @@ document.addEventListener('alpine:init', () => {
 Alpine.plugin(collapse)
 
 Alpine.start()
+
+const initPasswordVisibilityToggles = () => {
+    const updateButtonState = (button, isVisible) => {
+        const showIcon = button.querySelector('[data-password-icon="show"]')
+        const hideIcon = button.querySelector('[data-password-icon="hide"]')
+        const showLabel = button.dataset.passwordLabelShow || 'Mostrar contraseña'
+        const hideLabel = button.dataset.passwordLabelHide || 'Ocultar contraseña'
+
+        if (showIcon && hideIcon) {
+            showIcon.classList.toggle('hidden', isVisible)
+            hideIcon.classList.toggle('hidden', !isVisible)
+        }
+
+        button.setAttribute('aria-label', isVisible ? hideLabel : showLabel)
+        button.setAttribute('aria-pressed', isVisible ? 'true' : 'false')
+    }
+
+    document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+        const targetId = button.getAttribute('data-password-target')
+        if (!targetId) {
+            return
+        }
+
+        const input = document.getElementById(targetId)
+        if (!input) {
+            return
+        }
+
+        button.addEventListener('click', () => {
+            const showing = input.type === 'text'
+            input.setAttribute('type', showing ? 'password' : 'text')
+            updateButtonState(button, !showing)
+        })
+
+        updateButtonState(button, input.type === 'text')
+    })
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPasswordVisibilityToggles)
+} else {
+    initPasswordVisibilityToggles()
+}

@@ -70,13 +70,12 @@ class SolicitudPolicy
                 SolicitudStatus::PENDIENTE_FARMACIA => in_array($nextStatus, [
                     SolicitudStatus::APROBADA,
                     SolicitudStatus::RECHAZADA,
-                    SolicitudStatus::PENDIENTE_JEFE,
                 ], true),
                 SolicitudStatus::APROBADA => in_array($nextStatus, [
                     SolicitudStatus::SURTIDA,
                     SolicitudStatus::PENDIENTE_FARMACIA,
                 ], true),
-                SolicitudStatus::RECHAZADA => $nextStatus === SolicitudStatus::PENDIENTE_JEFE,
+                SolicitudStatus::RECHAZADA => false,
                 SolicitudStatus::SURTIDA => false,
             };
         }

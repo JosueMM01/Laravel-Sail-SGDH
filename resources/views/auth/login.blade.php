@@ -85,8 +85,20 @@
                                     required
                                     autocomplete="current-password"
                                     placeholder="Introduce tu contraseña"
-                                    class="w-full rounded-2xl border border-[#d7f0d7] bg-white py-3 pl-12 pr-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/80"
+                                    class="w-full rounded-2xl border border-[#d7f0d7] bg-white py-3 pl-12 pr-12 text-base text-slate-900 placeholder:text-slate-400 focus:border-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/80"
                                 >
+                                <button
+                                    type="button"
+                                    class="absolute inset-y-0 right-3 flex items-center rounded-full px-2 text-slate-400 transition hover:text-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/40"
+                                    data-password-toggle
+                                    data-password-target="password"
+                                    data-password-label-show="Mostrar contraseña"
+                                    data-password-label-hide="Ocultar contraseña"
+                                    aria-label="Mostrar contraseña"
+                                >
+                                    <x-heroicon-o-eye class="h-5 w-5" data-password-icon="show" aria-hidden="true" />
+                                    <x-heroicon-o-eye-slash class="hidden h-5 w-5" data-password-icon="hide" aria-hidden="true" />
+                                </button>
                             </div>
                         </div>
 
