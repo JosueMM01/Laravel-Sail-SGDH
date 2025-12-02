@@ -4,6 +4,8 @@
 # ===== STAGE 1: Builder (Composer & NPM) =====
 FROM php:8.3-fpm-alpine AS builder
 
+ENV TZ=America/Mexico_City
+
 WORKDIR /var/www/html
 
 # Instalar dependencias del sistema necesarias para compilar extensiones PHP
@@ -34,6 +36,9 @@ RUN set -eux; \
     unzip \
     nodejs \
     npm \
+    tzdata \
+    && ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" > /etc/timezone \
     && export PHPIZE_DEPS="" \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
@@ -69,6 +74,8 @@ RUN composer dump-autoload --optimize && \
 # ===== STAGE 2: Runtime (PHP-FPM + Nginx) =====
 FROM php:8.3-fpm-alpine
 
+ENV TZ=America/Mexico_City
+
 LABEL maintainer="JosueMM01"
 LABEL description="SGDH - Sistema de Gestión de Dotaciones Hospitalarias"
 
@@ -91,7 +98,10 @@ RUN set -eux; \
     zlib \
     libwebp \
     libjpeg-turbo \
-    freetype
+    freetype \
+    tzdata \
+    && ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" > /etc/timezone
 
 # Copiar extensiones PHP compiladas desde builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/

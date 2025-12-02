@@ -56,7 +56,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('areas', AreaController::class)->except(['show']);
         Route::get('dotaciones/areas/{area}/surtir', [DotacionController::class, 'fulfillForm'])->name('dotaciones.fulfill-form');
         Route::post('dotaciones/areas/{area}/surtir', [DotacionController::class, 'fulfill'])->name('dotaciones.fulfill');
-        Route::resource('dotaciones', DotacionController::class)->except(['show']);
+        Route::resource('dotaciones', DotacionController::class)
+            ->except(['show'])
+            ->parameters(['dotaciones' => 'dotacion']);
         Route::patch('productos/{producto}/desactivar', [ProductoController::class, 'deactivate'])->name('productos.deactivate');
         Route::patch('productos/{producto}/activar', [ProductoController::class, 'activate'])->name('productos.activate');
         Route::resource('productos', ProductoController::class);

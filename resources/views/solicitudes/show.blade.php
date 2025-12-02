@@ -50,14 +50,6 @@
                                     <dt class="text-xs font-semibold uppercase tracking-[0.25em] text-[#006600]">Solicitante</dt>
                                     <dd class="mt-2 text-base font-semibold text-slate-900">{{ $solicitud->usuarioSolicitante?->name ?? '—' }}</dd>
                                 </div>
-                                <div class="rounded-2xl border border-[#e7f5e7] bg-white px-4 py-3">
-                                    <dt class="text-xs font-semibold uppercase tracking-[0.25em] text-[#006600]">Tipo de uso</dt>
-                                    <dd class="mt-2 font-semibold text-slate-900">{{ $solicitud->uso ?? '—' }}</dd>
-                                </div>
-                                <div class="rounded-2xl border border-[#e7f5e7] bg-white px-4 py-3">
-                                    <dt class="text-xs font-semibold uppercase tracking-[0.25em] text-[#006600]">Destino</dt>
-                                    <dd class="mt-2 font-semibold text-slate-900">{{ $solicitud->destino ?? '—' }}</dd>
-                                </div>
                                 <div class="sm:col-span-2 rounded-2xl border border-[#e7f5e7] bg-white px-4 py-3">
                                     <dt class="text-xs font-semibold uppercase tracking-[0.25em] text-[#006600]">Justificación</dt>
                                     <dd class="mt-2 whitespace-pre-line text-sm text-slate-700">{{ $solicitud->justificacion ?? '—' }}</dd>
@@ -108,14 +100,14 @@
                                         </form>
                                     @endcan
                                 @elseif ($statusEnum === \App\Enums\SolicitudStatus::RECHAZADA)
-                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::PENDIENTE_JEFE])
+                                    @can('updateStatus', [$solicitud, \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA])
                                         <form method="POST" action="{{ route('solicitudes.update-status', $solicitud) }}" class="space-y-3">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::PENDIENTE_JEFE->value }}">
+                                            <input type="hidden" name="estatus" value="{{ \App\Enums\SolicitudStatus::PENDIENTE_FARMACIA->value }}">
                                             <x-button type="submit" class="w-full justify-center" variant="secondary">
                                                 <x-heroicon-o-arrow-path class="h-4 w-4" aria-hidden="true" />
-                                                <span>Reabrir validación</span>
+                                                <span>Reabrir revisión de farmacia</span>
                                             </x-button>
                                         </form>
                                     @endcan

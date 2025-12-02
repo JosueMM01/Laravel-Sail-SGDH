@@ -15,11 +15,15 @@
                 <div class="mb-6 grid gap-4 rounded-3xl border border-[#e7f5e7] bg-[#f9fef9] px-5 py-4 sm:grid-cols-2">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#009900]/80">Área</p>
-                        <p class="mt-1 text-base font-semibold text-slate-900">{{ $dotacion->area->nombre }}</p>
+                        <p class="mt-1 text-base font-semibold text-slate-900">
+                            {{ data_get($dotacion, 'area.nombre', 'Área sin asignar') }}
+                        </p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#009900]/80">Producto</p>
-                        <p class="mt-1 text-base font-semibold text-slate-900">{{ $dotacion->producto->descripcion }}</p>
+                        <p class="mt-1 text-base font-semibold text-slate-900">
+                            {{ data_get($dotacion, 'producto.descripcion', 'Producto sin asignar') }}
+                        </p>
                     </div>
                 </div>
 

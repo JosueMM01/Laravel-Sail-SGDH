@@ -43,25 +43,55 @@
 
                 <div class="space-y-2">
                     <x-form.label for="password" :value="__('Contraseña nueva')" />
-                    <x-form.input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        autocomplete="new-password"
-                    />
+                    <div class="relative">
+                        <x-form.input
+                            id="password"
+                            type="password"
+                            name="password"
+                            required
+                            autocomplete="new-password"
+                            class="pr-12"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-3 flex items-center rounded-full px-2 text-slate-400 transition hover:text-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/40"
+                            data-password-toggle
+                            data-password-target="password"
+                            data-password-label-show="Mostrar contraseña"
+                            data-password-label-hide="Ocultar contraseña"
+                            aria-label="Mostrar contraseña"
+                        >
+                            <x-heroicon-o-eye class="h-5 w-5" data-password-icon="show" aria-hidden="true" />
+                            <x-heroicon-o-eye-slash class="hidden h-5 w-5" data-password-icon="hide" aria-hidden="true" />
+                        </button>
+                    </div>
                     <p class="text-xs text-slate-500">Utiliza al menos 8 caracteres combinando mayúsculas, minúsculas y números.</p>
                 </div>
 
                 <div class="space-y-2">
                     <x-form.label for="password_confirmation" :value="__('Confirmar contraseña')" />
-                    <x-form.input
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        required
-                        autocomplete="new-password"
-                    />
+                    <div class="relative">
+                        <x-form.input
+                            id="password_confirmation"
+                            type="password"
+                            name="password_confirmation"
+                            required
+                            autocomplete="new-password"
+                            class="pr-12"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-3 flex items-center rounded-full px-2 text-slate-400 transition hover:text-[#006600] focus:outline-none focus:ring-2 focus:ring-[#006600]/40"
+                            data-password-toggle
+                            data-password-target="password_confirmation"
+                            data-password-label-show="Mostrar contraseña"
+                            data-password-label-hide="Ocultar contraseña"
+                            aria-label="Mostrar contraseña"
+                        >
+                            <x-heroicon-o-eye class="h-5 w-5" data-password-icon="show" aria-hidden="true" />
+                            <x-heroicon-o-eye-slash class="hidden h-5 w-5" data-password-icon="hide" aria-hidden="true" />
+                        </button>
+                    </div>
                 </div>
 
                 <x-button class="w-full justify-center">

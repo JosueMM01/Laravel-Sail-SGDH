@@ -40,5 +40,5 @@ class LoteController extends Controller
         Lote::create($validated);
         return redirect()->route('lotes.index')->with('success', 'Lote registrado correctamente.');
     }
-    // Edit/Update/Destroy similares al CRUD base si necesitas corregir errores de captura.
+    
 }

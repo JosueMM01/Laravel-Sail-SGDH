@@ -57,3 +57,25 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+Las rutas definidas en api.php tienen automáticamente el prefijo /api.
+
+🔐 Autenticación
+Método	URL	Descripción
+POST	https://sgdh.systems/api/auth/token	Iniciar sesión. Envía credenciales (email, password) para obtener un token Bearer.
+POST	https://sgdh.systems/api/auth/google	Login con Google. Intercambia un token de Google por un token de la API.
+DELETE	https://sgdh.systems/api/auth/token	Cerrar sesión. Revoca el token actual. (Requiere Auth)
+🔔 Notificaciones (Requiere Auth)
+Método	URL	Descripción
+GET	https://sgdh.systems/api/notifications	Listar las notificaciones del usuario autenticado.
+PATCH	https://sgdh.systems/api/notifications/{id}	Marcar una notificación específica como leída.
+📦 Productos (Requiere Auth)
+Método	URL	Descripción
+GET	https://sgdh.systems/api/productos	Obtener el listado de productos disponibles.
+📋 Solicitudes (Requiere Auth)
+Método	URL	Descripción
+GET	https://sgdh.systems/api/solicitudes	Listar todas las solicitudes.
+POST	https://sgdh.systems/api/solicitudes	Crear una nueva solicitud.
+GET	https://sgdh.systems/api/solicitudes/{id}	Ver el detalle de una solicitud específica.
+PATCH	https://sgdh.systems/api/solicitudes/{id}/estatus	Actualizar el estatus de una solicitud.

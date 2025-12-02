@@ -72,9 +72,9 @@ enum SolicitudStatus: string
     {
         return match ($this) {
             self::PENDIENTE_JEFE => [self::PENDIENTE_FARMACIA],
-            self::PENDIENTE_FARMACIA => [self::APROBADA, self::RECHAZADA, self::PENDIENTE_JEFE],
+            self::PENDIENTE_FARMACIA => [self::APROBADA, self::RECHAZADA],
             self::APROBADA => [self::SURTIDA, self::PENDIENTE_FARMACIA],
-            self::RECHAZADA => [self::PENDIENTE_JEFE],
+            self::RECHAZADA => [self::PENDIENTE_FARMACIA],
             self::SURTIDA => [],
         };
     }
