@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Enums\UserRole;
+use App\Notifications\Channels\FcmTopicChannel;
 use App\Enums\SolicitudStatus;
 use App\Models\Solicitud;
 use App\Models\User;
@@ -31,12 +33,14 @@ class SolicitudStatusUpdated extends Notification
     {
         $channels = ['database'];
 
-        if (! empty($notifiable->email)) {
-            $channels[] = 'mail';
+        if ($this->shouldBroadcast()) {
+            $channels[] = 'broadcast';
         }
 
-        if (config('broadcasting.default') !== 'null') {
-            $channels[] = 'broadcast';
+        $channels[] = FcmTopicChannel::class;
+
+        if ($this->shouldSendMail($notifiable)) {
+            $channels[] = 'mail';
         }
 
         return $channels;
@@ -62,6 +66,24 @@ class SolicitudStatusUpdated extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->notificationPayload());
+    }
+
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => __('Solicitud #:id - :status', [
+                'id' => $this->solicitud->id,
+                'status' => $this->status->label(),
+            ]),
+            'body' => $this->message,
+            'data' => array_filter([
+                'solicitud_id' => (string) $this->solicitud->id,
+                'estatus' => $this->status->value,
+                'estatus_label' => $this->status->label(),
+                'performed_by' => $this->performedBy?->name,
+                'updated_at' => $this->solicitud->updated_at?->toIso8601String(),
+            ]),
+        ];
     }
 
     private function notificationPayload(): array
@@ -100,5 +122,23 @@ class SolicitudStatusUpdated extends Notification
             SolicitudStatus::PENDIENTE_JEFE => __('La solicitud #:id regresó a revisión del jefe de área.', ['id' => $id]),
             default => __('Se registró un cambio en la solicitud #:id.', ['id' => $id]),
         };
+    }
+
+    private function shouldSendMail(object $notifiable): bool
+    {
+        if (empty($notifiable->email) || $this->status !== SolicitudStatus::RECHAZADA) {
+            return false;
+        }
+
+        if ($notifiable instanceof User) {
+            return $notifiable->role() !== UserRole::JEFE_AREA;
+        }
+
+        return true;
+    }
+
+    private function shouldBroadcast(): bool
+    {
+        return config('broadcasting.default') !== 'null';
     }
 }

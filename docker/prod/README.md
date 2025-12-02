@@ -49,6 +49,24 @@ FASE 2 - DESPLIEGUE (VPS Google Cloud)
 Docker Hub ──> docker pull josuem01/sgdh:latest ──> VPS
 ```
 
+### 🧹 Archivos que NO viajan al build
+
+El archivo `.dockerignore` evita que se copien a la imagen carpetas pesadas o con datos sensibles. Revisa la lista antes de agregar nuevos artefactos al repositorio:
+
+| Tipo | Ruta | Motivo |
+|------|------|--------|
+| Dependencias PHP | `vendor/` | Se instalan dentro del build para garantizar versiones consistentes |
+| Dependencias Node | `node_modules/` | Se regeneran con `npm ci` durante el build |
+| Archivos temporales | `storage/framework/*`, `storage/logs/*`, `bootstrap/cache/*` | Se crean en tiempo de ejecución y tienen volúmenes dedicados |
+| Entornos y secretos | `.env`, `.env.local`, `.env.production` | Nunca deben quedar en la imagen ni en Git público |
+| Documentación y pruebas | `docs/`, `tests/`, `README*.md`, `coverage/` | No son necesarios para ejecutar la app |
+
+Si necesitas incluir un nuevo recurso en producción (por ejemplo un seed estático), asegúrate de quitarlo de `.dockerignore` y justificarlo en este README.
+
+### 🔐 Archivos ignorados en Git
+
+El `.gitignore` bloquea la publicación de `.env`, llaves privadas, `storage/*.key`, build assets y los mismos documentos internos (`docs/README.md`, `docs/mobile.md`). Mantén las variables sensibles únicamente en `.env.local` o `.env.production` y distribúyelas de manera segura (por ejemplo via Secrets en el VPS). Recuerda agregar `FIREBASE_CREDENTIALS=storage/app/firebase_credentials.json` y subir el JSON de service account **solo** al servidor o a un secret manager; el archivo está excluido de Git y del build.
+
 ---
 
 ## 🎯 Requisitos Previos
@@ -77,7 +95,7 @@ ls -la docker/prod/
 # Dockerfile ✓
 # docker-compose.yml ✓ (image: josuem01/sgdh:latest)
 # Caddyfile ✓ (dominio: sgdh.systems)
-# .env.production ✓ (APP_URL=https://sgdh.systems, MySQL configurado)
+# .env.production ✓ (APP_URL=https://sgdh.systems, MySQL configurado, FIREBASE_CREDENTIALS definido)
 # nginx.conf, default.conf, supervisord.conf, entrypoint.sh ✓
 ```
 
@@ -399,6 +417,20 @@ docker compose logs app --tail=50
 # Reiniciar todo
 docker compose restart
 
+# Reiniciar solo la app (útil tras un deploy)
+docker compose restart app
+
+
+### Mantener el worker de colas activo (FCM / notificaciones)
+
+La aplicación usa `QUEUE_CONNECTION=database`, por lo que **todos los entornos** deben tener un worker escuchando permanentemente.
+
+| Entorno | Comando | Notas |
+|---------|---------|-------|
+| Local (Sail) | `./vendor/bin/sail artisan queue:work --sleep=3 --tries=3` | Déjalo corriendo en una terminal aparte. |
+| Producción (VPS) | `docker compose exec -d app php artisan queue:work --sleep=3 --tries=3 --max-time=3600` | Repite el comando tras cada deploy o crea un servicio adicional en `docker-compose.yml`/Supervisor si quieres que se inicie automáticamente. |
+
+> Si el worker se detiene, las notificaciones push (FCM) y correos quedarán en la tabla `jobs` sin ejecutarse. Supervisa con `docker compose logs app | grep queue` y `php artisan queue:failed`.
 # Reiniciar solo app
 docker compose restart app
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\SolicitudStatus;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Events\SolicitudStatusChanged;
 use App\Http\Requests\Api\StoreSolicitudRequest;
@@ -10,11 +11,15 @@ use App\Http\Requests\Api\UpdateSolicitudStatusRequest;
 use App\Http\Resources\SolicitudResource;
 use App\Models\Solicitud;
 use App\Models\SolicitudDetalle;
+use App\Models\User;
+use App\Notifications\SolicitudStatusUpdated;
 use App\Policies\SolicitudPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class SolicitudController extends Controller
 {
@@ -104,6 +109,8 @@ class SolicitudController extends Controller
             return $solicitud->fresh(['area', 'usuarioSolicitante', 'detalles.producto']);
         });
 
+        $this->notifyAreaManagers($solicitud, $user);
+
         return (new SolicitudResource($solicitud))
             ->response()
             ->setStatusCode(201);
@@ -183,5 +190,33 @@ class SolicitudController extends Controller
             'message' => $message,
             'data' => new SolicitudResource($updatedSolicitud),
         ]);
+    }
+
+    private function notifyAreaManagers(Solicitud $solicitud, User $creator): void
+    {
+        if (! $creator->area_id) {
+            return;
+        }
+
+        try {
+            $managers = User::query()
+                ->where('area_id', $creator->area_id)
+                ->where('rol', UserRole::JEFE_AREA->value)
+                ->get();
+
+            foreach ($managers as $manager) {
+                $manager->notify(new SolicitudStatusUpdated(
+                    solicitud: $solicitud,
+                    status: SolicitudStatus::PENDIENTE_JEFE,
+                    performedBy: $creator
+                ));
+            }
+        } catch (Throwable $exception) {
+            Log::error('Error notificando al jefe de área sobre nueva solicitud.', [
+                'solicitud_id' => $solicitud->id,
+                'area_id' => $creator->area_id,
+                'exception' => $exception->getMessage(),
+            ]);
+        }
     }
 }

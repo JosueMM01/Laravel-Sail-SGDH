@@ -3,14 +3,11 @@
 namespace App\Providers;
 
 use App\Enums\UserRole;
-use App\Events\SolicitudStatusChanged;
-use App\Listeners\SendSolicitudStatusNotification;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Policies\SolicitudPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,11 +27,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Solicitud::class, SolicitudPolicy::class);
-
-        Event::listen(
-            SolicitudStatusChanged::class,
-            [SendSolicitudStatusNotification::class, 'handle']
-        );
 
         Gate::define('manage-users', function (User $user) {
             $role = $user->role();
